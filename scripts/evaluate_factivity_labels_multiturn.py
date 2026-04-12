@@ -13,7 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATASET = ROOT / "sample sets" / "sample_20260401.json"
-DEFAULT_OUTPUT_DIR = ROOT / "outputs_v4_MT"
+DEFAULT_OUTPUT_DIR = ROOT / "outputs_v5_MT_revised"
 VALID_LABELS = ("TRUE", "FALSE", "UNCERTAIN")
 SUBJECT_TYPES = ("说话人", "第三方", "无", "speaker", "third_party", "none")
 
@@ -145,6 +145,71 @@ def parse_extraction_output(raw_text: str) -> dict[str, str]:
     }
 
 
+def build_expert_guidance(extraction: dict[str, str], prompt_lang: str) -> dict[str, str]:
+    subject_type = extraction["subject_type"]
+    basis = extraction["basis"].strip()
+    basis_is_empty = basis in {"", "无", "none", "None"}
+
+    if prompt_lang == "en":
+        if subject_type != "第三方":
+            return {
+                "expert_rule": "SPEAKER_MAIN_VIEW",
+                "expert_advice": (
+                    "Expert advice: The main viewpoint of this sentence should be treated as the "
+                    "**speaker**'s viewpoint. Judge the tendency of the **speaker** toward the "
+                    "hypothesis directly from the whole sentence."
+                ),
+            }
+        if basis_is_empty:
+            return {
+                "expert_rule": "THIRD_PARTY_NO_BASIS",
+                "expert_advice": (
+                    "Expert advice: The relevant subject is not the **speaker**, and there is **no basis** "
+                    "in the sentence. This often means that the **speaker** is only reporting another "
+                    "person's tendency toward the hypothesis. Our task is to judge the tendency of the "
+                    "**speaker**, not the third party. If the wording of the **speaker** does not itself "
+                    "carry a clear extra tendency, do not directly convert the third party's tendency into "
+                    "the **speaker**'s tendency."
+                ),
+            }
+        return {
+            "expert_rule": "THIRD_PARTY_WITH_BASIS",
+            "expert_advice": (
+                "Expert advice: The relevant subject is not the **speaker**, but there **is basis** in the "
+                "sentence. Usually, if the **speaker** did not accept the basis to some extent, the "
+                "**speaker** would not provide it. Therefore consider this reasoning chain: the **speaker** "
+                "accepts or relies on the basis -> the basis carries a factual direction -> the **speaker** "
+                "has a tendency toward the hypothesis. Do not stop at the third party's attitude alone."
+            ),
+        }
+
+    if subject_type != "第三方":
+        return {
+            "expert_rule": "SPEAKER_MAIN_VIEW",
+            "expert_advice": (
+                "专家建议：当前句子的主视角按**说话人**处理。请直接根据整句话中**说话人**对 "
+                "hypothesis 的倾向判断，不要改成判断其他主体的倾向。"
+            ),
+        }
+    if basis_is_empty:
+        return {
+            "expert_rule": "THIRD_PARTY_NO_BASIS",
+            "expert_advice": (
+                "专家建议：当前相关主语不是**说话人**，且句中**无basis**。这通常意味着**说话人**只是在陈述他人"
+                "对 hypothesis 的倾向，而我们的任务是判断**说话人**对 hypothesis 的倾向。如果**说话人**的"
+                "表述本身没有额外带出明确倾向，则不能直接把第三方的倾向当成**说话人**的倾向。"
+            ),
+        }
+    return {
+        "expert_rule": "THIRD_PARTY_WITH_BASIS",
+        "expert_advice": (
+            "专家建议：当前相关主语不是**说话人**，但句中**有basis**。请注意，如果**说话人**完全不相信这条"
+            "倾向，通常不会主动给出 basis。因此判断时应考虑这条逻辑链：**说话人**相信或依赖 basis -> "
+            "basis 本身带有事实倾向 -> **说话人**对 hypothesis 有倾向。不要只停留在第三方态度本身。"
+        ),
+    }
+
+
 def build_first_turn_prompt(text: str, hypothesis: str, prompt_lang: str) -> str:
     if prompt_lang == "en":
         return f"""Task: Extract a small set of intermediate fields for factivity reasoning from the given text and hypothesis.
@@ -226,6 +291,7 @@ def build_second_turn_prompt(
     text: str,
     hypothesis: str,
     extraction: dict[str, str],
+    expert_guidance: dict[str, str],
     prompt_lang: str,
 ) -> str:
     if prompt_lang == "en":
@@ -265,7 +331,11 @@ subject_type: {extraction["subject_type"]}
 proposition_subject: {extraction["proposition_subject"]}
 attitude_predicate: {extraction["attitude_predicate"]}
 attitude_hint: {extraction["attitude_hint"]}
-basis: {extraction["basis"]}"""
+basis: {extraction["basis"]}
+
+Expert rule: {expert_guidance["expert_rule"]}
+Expert advice:
+{expert_guidance["expert_advice"]}"""
 
     return f"""任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。
 
@@ -303,7 +373,11 @@ subject_type: {extraction["subject_type"]}
 proposition_subject: {extraction["proposition_subject"]}
 attitude_predicate: {extraction["attitude_predicate"]}
 attitude_hint: {extraction["attitude_hint"]}
-basis: {extraction["basis"]}"""
+basis: {extraction["basis"]}
+
+专家规则：{expert_guidance["expert_rule"]}
+专家建议：
+{expert_guidance["expert_advice"]}"""
 
 
 @dataclass
@@ -317,14 +391,14 @@ class Prediction:
     first_turn_prompt: str
     first_turn_output: str
     extraction: dict[str, str]
+    expert_guidance: dict[str, str]
     second_turn_prompt: str
     second_turn_output: str
 
 
 class MockMultiTurnClient:
     def predict(self, text: str, hypothesis: str, prompt_lang: str) -> dict[str, Any]:
-        del prompt_lang
-        first_turn_prompt = build_first_turn_prompt(text, hypothesis, "zh")
+        first_turn_prompt = build_first_turn_prompt(text, hypothesis, prompt_lang)
         subject_type = "第三方"
         proposition_subject = "无"
         attitude_predicate = "无"
@@ -384,7 +458,8 @@ class MockMultiTurnClient:
             f"<basis>{basis}</basis>"
         )
         extraction = parse_extraction_output(first_turn_output)
-        second_turn_prompt = build_second_turn_prompt(text, hypothesis, extraction, "zh")
+        expert_guidance = build_expert_guidance(extraction, prompt_lang)
+        second_turn_prompt = build_second_turn_prompt(text, hypothesis, extraction, expert_guidance, prompt_lang)
 
         label = "TRUE"
         if extraction["basis"] == "无" and extraction["attitude_predicate"] in {"认为", "猜测", "担心", "估计", "梦想"}:
@@ -399,6 +474,7 @@ class MockMultiTurnClient:
             "first_turn_prompt": first_turn_prompt,
             "first_turn_output": first_turn_output,
             "extraction": extraction,
+            "expert_guidance": expert_guidance,
             "second_turn_prompt": second_turn_prompt,
             "second_turn_output": second_turn_output,
             "pred_label": extract_answer_label(second_turn_output),
@@ -434,7 +510,7 @@ class OpenAICompatibleMultiTurnClient:
                 response = self.client.chat.completions.create(
                     model=self.model,
                     messages=messages,
-                    temperature=0,
+                    temperature=0.3,
                     max_tokens=max_tokens,
                 )
                 content = response.choices[0].message.content
@@ -452,21 +528,23 @@ class OpenAICompatibleMultiTurnClient:
     def predict(self, text: str, hypothesis: str, prompt_lang: str) -> dict[str, Any]:
         first_turn_prompt = build_first_turn_prompt(text, hypothesis, prompt_lang)
         first_messages = [{"role": "user", "content": first_turn_prompt}]
-        first_turn_output = self.chat_once(first_messages, max_tokens=256)
+        first_turn_output = self.chat_once(first_messages, max_tokens=1280)
         extraction = parse_extraction_output(first_turn_output)
-        second_turn_prompt = build_second_turn_prompt(text, hypothesis, extraction, prompt_lang)
+        expert_guidance = build_expert_guidance(extraction, prompt_lang)
+        second_turn_prompt = build_second_turn_prompt(text, hypothesis, extraction, expert_guidance, prompt_lang)
 
         second_messages = [
             {"role": "user", "content": first_turn_prompt},
             {"role": "assistant", "content": first_turn_output},
             {"role": "user", "content": second_turn_prompt},
         ]
-        second_turn_output = self.chat_once(second_messages, max_tokens=256)
+        second_turn_output = self.chat_once(second_messages, max_tokens=1280)
         pred_label = extract_answer_label(second_turn_output)
         return {
             "first_turn_prompt": first_turn_prompt,
             "first_turn_output": first_turn_output,
             "extraction": extraction,
+            "expert_guidance": expert_guidance,
             "second_turn_prompt": second_turn_prompt,
             "second_turn_output": second_turn_output,
             "pred_label": pred_label,
@@ -515,6 +593,7 @@ def evaluate(
                 first_turn_prompt=result["first_turn_prompt"],
                 first_turn_output=result["first_turn_output"],
                 extraction=result["extraction"],
+                expert_guidance=result["expert_guidance"],
                 second_turn_prompt=result["second_turn_prompt"],
                 second_turn_output=result["second_turn_output"],
             )
@@ -585,6 +664,7 @@ def save_results(
                 "ok": item.ok,
                 "first_turn_prompt": item.first_turn_prompt,
                 "extraction": item.extraction,
+                "expert_guidance": item.expert_guidance,
                 "first_turn_output": item.first_turn_output,
                 "second_turn_prompt": item.second_turn_prompt,
                 "second_turn_output": item.second_turn_output,
@@ -610,6 +690,7 @@ def save_results(
                 "ok": item.ok,
                 "first_turn_prompt": item.first_turn_prompt,
                 "extraction": item.extraction,
+                "expert_guidance": item.expert_guidance,
                 "first_turn_output": item.first_turn_output,
                 "second_turn_prompt": item.second_turn_prompt,
                 "second_turn_output": item.second_turn_output,
