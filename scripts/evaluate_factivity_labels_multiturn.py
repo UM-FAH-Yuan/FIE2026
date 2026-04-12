@@ -134,11 +134,13 @@ def parse_extraction_output(raw_text: str) -> dict[str, str]:
     subject_type = normalize_subject_type(extract_tag(raw_text, "subject_type"))
     proposition_subject = extract_tag(raw_text, "proposition_subject")
     attitude_predicate = extract_tag(raw_text, "attitude_predicate")
+    attitude_hint = extract_tag(raw_text, "attitude_hint")
     basis = extract_tag(raw_text, "basis")
     return {
         "subject_type": subject_type,
         "proposition_subject": proposition_subject,
         "attitude_predicate": attitude_predicate,
+        "attitude_hint": attitude_hint,
         "basis": basis,
     }
 
@@ -159,8 +161,14 @@ Field definitions:
    - the subject of the proposition expressed by the hypothesis
    - if absent, output none
 3. attitude_predicate:
-   - the key predicate or expression in the text that shows the relevant subject's attitude toward the proposition
-4. basis:
+   - the key trigger expression that carries the relevant subject's tendency toward the proposition
+   - do not extract just any ordinary predicate; extract the expression most useful for judging the proposition's semantic direction
+4. attitude_hint:
+   - a short semantic hint about the trigger expression in this sentence
+   - do not give the final label
+   - instead describe the directional cue, such as:
+     "strong factive trigger", "weak guess", "contains negative connotation", "implies unreliability", "presupposes truth", "supported suspicion"
+5. basis:
    - the factual basis, source, evidence, authority, observation, investigation result, correction, or grounding mentioned in the text
    - if no such basis is given, output none
 
@@ -170,6 +178,7 @@ You must strictly follow this format and output nothing else:
 <subject_type>speaker</subject_type>
 <proposition_subject>...</proposition_subject>
 <attitude_predicate>...</attitude_predicate>
+<attitude_hint>...</attitude_hint>
 <basis>...</basis>
 
 text: {text}
@@ -189,8 +198,14 @@ hypothesis: {hypothesis}"""
    - hypothesis 所表达命题的主语
    - 如果没有明确主语，输出 无
 3. attitude_predicate：
-   - text 中体现相关主语对该命题态度的关键谓语或表达
-4. basis：
+   - text 中最能体现相关主语对该命题倾向的关键触发表达
+   - 不是随便抽一个普通谓语，而是要抽最有助于后续判断命题方向的表达
+4. attitude_hint：
+   - 对 attitude_predicate 的简短语义提示
+   - 不要直接给最终标签
+   - 只说明它体现出的倾向线索，例如：
+     “强事实触发词”“弱猜测”“带贬义，暗示不可靠”“预设命题为真”“有根据的怀疑”
+5. basis：
    - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑
    - 如果没有这类根据，输出 无
 
@@ -200,6 +215,7 @@ hypothesis: {hypothesis}"""
 <subject_type>说话人</subject_type>
 <proposition_subject>...</proposition_subject>
 <attitude_predicate>...</attitude_predicate>
+<attitude_hint>...</attitude_hint>
 <basis>...</basis>
 
 text: {text}
@@ -215,6 +231,9 @@ def build_second_turn_prompt(
     if prompt_lang == "en":
         return f"""Task: Use the extracted fields and the original text to determine the final factivity label of the hypothesis.
 
+The extracted fields below are expert-structured information. You should rely mainly on them.
+Use the original text only as a secondary reference for verification. Do not ignore the extracted fields and start over from scratch.
+
 What matters is the speaker's tendency toward the proposition in the hypothesis.
 
 Follow these rules:
@@ -223,7 +242,8 @@ Follow these rules:
 2. If subject_type is not speaker, inspect the stance attributed to that subject in the sentence.
    If it is only unsupported guessing, believing, hoping, worrying, imagining, or similar weak mentality, and basis is none, output UNCERTAIN.
 3. Otherwise, if the sentence provides factual basis, source, evidence, observation, investigation result, correction, authority, or other grounding, treat that as support for the speaker's implicit tendency.
-4. Use the combination of attitude_predicate, basis, and the original sentence to decide whether the speaker's tendency is positive, negative, or uncertain.
+4. Use attitude_predicate and especially attitude_hint to judge the semantic direction carried by the trigger expression.
+5. Then combine subject_type, attitude_predicate, attitude_hint, basis, and the original sentence to decide whether the speaker's tendency is positive, negative, or uncertain.
 
 Decision rule:
 - positive tendency -> TRUE
@@ -244,19 +264,24 @@ Extracted fields:
 subject_type: {extraction["subject_type"]}
 proposition_subject: {extraction["proposition_subject"]}
 attitude_predicate: {extraction["attitude_predicate"]}
+attitude_hint: {extraction["attitude_hint"]}
 basis: {extraction["basis"]}"""
 
     return f"""任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。
+
+下面的抽取结果是专家提取的结构化信息，你应当主要参考这份信息。
+原始 text 只作为辅助核对材料，不要忽略抽取结果后重新从头自由发挥。
 
 最重要的是判断说话人对 hypothesis 所表达命题的倾向。
 
 请按照以下规则判断：
 1. 先看相关主语是不是认知主体。
-   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。
+   如果 subject_type 是“说话人”，就优先根据该主语的倾向判断。
 2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。
    如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。
 3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。
-4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。
+4. 判断 attitude_predicate 的方向时，要特别参考 attitude_hint 提供的语义提示。
+5. 最后结合 subject_type、attitude_predicate、attitude_hint、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。
 
 判断规则：
 - 正向倾向 -> TRUE
@@ -277,6 +302,7 @@ hypothesis: {hypothesis}
 subject_type: {extraction["subject_type"]}
 proposition_subject: {extraction["proposition_subject"]}
 attitude_predicate: {extraction["attitude_predicate"]}
+attitude_hint: {extraction["attitude_hint"]}
 basis: {extraction["basis"]}"""
 
 
@@ -302,6 +328,7 @@ class MockMultiTurnClient:
         subject_type = "第三方"
         proposition_subject = "无"
         attitude_predicate = "无"
+        attitude_hint = "无"
         basis = "无"
 
         if text.startswith(("我", "我们")):
@@ -321,6 +348,25 @@ class MockMultiTurnClient:
                 attitude_predicate = marker
                 break
 
+        hint_map = {
+            "知道": "强事实触发词",
+            "发现": "强事实触发词",
+            "意识到": "预设命题为真",
+            "注意到": "预设命题为真",
+            "认为": "弱判断，方向未完全定死",
+            "猜测": "弱猜测",
+            "担心": "弱心理态度，带负向担忧",
+            "推测": "推断性表达，需结合根据判断",
+            "估计": "弱推断，存在倾向但不强",
+            "错误地认为": "显式反向触发",
+            "假装": "暗示表面陈述不可靠",
+            "吹嘘": "带贬义，暗示不可靠",
+            "控告": "指控性表达，需结合根据判断",
+            "梦想": "弱心理态度，缺乏现实承诺",
+        }
+        if attitude_predicate in hint_map:
+            attitude_hint = hint_map[attitude_predicate]
+
         basis_markers = (
             "根据", "通过", "结果", "账本", "监控", "指纹", "观察", "审计", "专家", "宣布", "事实已经证明"
         )
@@ -334,6 +380,7 @@ class MockMultiTurnClient:
             f"<subject_type>{subject_type}</subject_type>"
             f"<proposition_subject>{proposition_subject}</proposition_subject>"
             f"<attitude_predicate>{attitude_predicate}</attitude_predicate>"
+            f"<attitude_hint>{attitude_hint}</attitude_hint>"
             f"<basis>{basis}</basis>"
         )
         extraction = parse_extraction_output(first_turn_output)
