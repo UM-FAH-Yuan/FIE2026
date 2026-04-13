@@ -188,7 +188,7 @@ def build_expert_guidance(extraction: dict[str, str], prompt_lang: str) -> dict[
             "expert_rule": "SPEAKER_MAIN_VIEW",
             "expert_advice": (
                 "专家建议：当前句子的主视角按**说话人**处理。请直接根据整句话中**说话人**对 "
-                "hypothesis 的倾向判断，不要改成判断其他主体的倾向。"
+                "hypothesis 的**倾向**判断，**不要**改成判断其他主体的倾向。"
             ),
         }
     if basis_is_empty:
@@ -346,7 +346,7 @@ Expert advice:
 
 请按照以下规则判断：
 1. 先看相关主语是不是认知主体。
-   如果 subject_type 是“说话人”，就优先根据该主语的倾向判断。
+   如果 subject_type 是“说话人”，就优先根据该主语的倾向判断。该判断**不需要**基于事实或其他主体倾向的支撑，注意我们的任务是判断**说话人的倾向**，包括不同强弱程度的主观推测
 2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。
    如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。
 3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。
@@ -378,6 +378,118 @@ basis: {extraction["basis"]}
 专家规则：{expert_guidance["expert_rule"]}
 专家建议：
 {expert_guidance["expert_advice"]}"""
+
+
+def build_expert_guidance(extraction: dict[str, str], prompt_lang: str) -> dict[str, str]:
+    subject_type = extraction["subject_type"]
+    basis = extraction["basis"]
+    predicate_type = extraction.get("predicate_type", "非叙实")
+    basis_is_empty = _is_empty_basis(basis)
+    is_third_party = _is_third_party_subject(subject_type)
+
+    predicate_type_hint_en = (
+        "Current predicate_type is "
+        f'"{predicate_type}". Treat it as follows: 正叙实 usually supports the proposition, '
+        '反叙实 usually rejects or undermines the proposition, and 非叙实 mainly expresses attitude, '
+        "cognition, speculation, emotion, or desire and does not by itself settle the proposition."
+    )
+    predicate_type_hint_zh = (
+        f"当前 predicate_type 为“{predicate_type}”。请这样使用它：正叙实通常倾向于支持命题成立，"
+        "反叙实通常倾向于否定、反驳或削弱命题成立，非叙实主要表达态度、认知、推测、情绪或愿望，"
+        "本身不直接决定命题真值。"
+    )
+
+    if prompt_lang == "en":
+        if not is_third_party:
+            return {
+                "expert_rule": "SPEAKER_MAIN_VIEW",
+                "expert_advice": (
+                    "Expert advice: The main viewpoint of the current sentence should be treated as the "
+                    "**speaker**'s viewpoint. Judge the tendency of the **speaker** toward the hypothesis "
+                    "directly from the whole sentence. Do not rewrite the task into judging some other "
+                    "entity's tendency. "
+                    + predicate_type_hint_en
+                ),
+            }
+        if basis_is_empty:
+            return {
+                "expert_rule": "THIRD_PARTY_NO_BASIS",
+                "expert_advice": (
+                    "Expert advice: The relevant subject is not the **speaker**, and there is **no basis** "
+                    "in the sentence. Do not directly convert the third party's stance into the "
+                    "**speaker**'s stance. First check whether the sentence only neutrally reports the "
+                    "third party's subjective cognitive activity, or whether the **speaker** adds an extra "
+                    "directional signal through evaluation, correction, presupposition, negation, or "
+                    "semantic connotation. Only if it is merely neutral reporting with no extra "
+                    "directional signal should you consider UNCERTAIN. "
+                    + predicate_type_hint_en
+                ),
+            }
+        return {
+            "expert_rule": "THIRD_PARTY_WITH_BASIS",
+            "expert_advice": (
+                "Expert advice: The relevant subject is not the **speaker**, but there **is basis** in the "
+                "sentence. This usually means the **speaker** is not merely neutral reporting the third "
+                "party's stance, but is introducing information that supports some direction. Treat the "
+                "basis as an important clue for the **speaker**'s implicit stance, and combine it with "
+                "attitude_predicate, predicate_type, attitude_hint, and the whole sentence to decide the "
+                "**speaker**'s direction toward the hypothesis. "
+                + predicate_type_hint_en
+            ),
+        }
+
+    if not is_third_party:
+        return {
+            "expert_rule": "SPEAKER_MAIN_VIEW",
+            "expert_advice": (
+                "专家建议：当前句子的主视角按**说话人**处理。请直接根据整句话中**说话人**对 "
+                "hypothesis 的倾向判断，不要改成判断其他主体的倾向。"
+                + predicate_type_hint_zh
+            ),
+        }
+    if basis_is_empty:
+        return {
+            "expert_rule": "THIRD_PARTY_NO_BASIS",
+            "expert_advice": (
+                "专家建议：当前相关主语不是**说话人**，且句中**无basis**。请不要直接把第三方态度当成"
+                "**说话人**的态度。先判断这句话是否只是中性报告第三方的主观认知活动，还是**说话人**通过"
+                "评价、纠正、预设、否定或语义褒贬等表达额外带出了自己的方向性信号。只有在确实只是中性转述、"
+                "且没有额外方向性信号时，才考虑 UNCERTAIN。"
+                + predicate_type_hint_zh
+            ),
+        }
+    return {
+        "expert_rule": "THIRD_PARTY_WITH_BASIS",
+        "expert_advice": (
+            "专家建议：当前相关主语不是**说话人**，且句中**有basis**。这通常说明**说话人**并非完全中性地"
+            "转述第三方态度，而是在引入可支撑某一方向的信息。请把 basis 视为判断**说话人**隐含立场的重要"
+            "线索，并结合 attitude_predicate、predicate_type、attitude_hint 和整体语义，一起判断"
+            "**说话人**对 hypothesis 的倾向。"
+            + predicate_type_hint_zh
+        ),
+    }
+
+
+def _is_third_party_subject(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return normalized == "third_party" or stripped == "第三方" or "第三方" in stripped
+
+
+def _is_speaker_or_none_subject(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return (
+        normalized in {"speaker", "none"}
+        or stripped in {"说话人", "无"}
+        or "说话人" in stripped
+    )
+
+
+def _is_empty_basis(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return normalized in {"", "none"} or stripped == "无"
 
 
 @dataclass
@@ -883,9 +995,10 @@ def build_expert_guidance(extraction: dict[str, str], prompt_lang: str) -> dict[
             return {
                 "expert_rule": "SPEAKER_MAIN_VIEW",
                 "expert_advice": (
-                    "Expert advice: The relevant viewpoint here should be treated as the **speaker**'s "
-                    "viewpoint. Judge the stance of the **speaker** toward the hypothesis directly from "
-                    "the whole sentence. Do not rewrite the task into judging some other entity's stance."
+                    "Expert advice: The main viewpoint of the current sentence should be treated as the "
+                    "**speaker**'s viewpoint. Judge the tendency of the **speaker** toward the "
+                    "hypothesis directly from the whole sentence. Do not rewrite the task into judging "
+                    "some other entity's tendency."
                 ),
             }
         if basis_is_empty:
@@ -917,8 +1030,8 @@ def build_expert_guidance(extraction: dict[str, str], prompt_lang: str) -> dict[
         return {
             "expert_rule": "SPEAKER_MAIN_VIEW",
             "expert_advice": (
-                "专家建议：当前相关视角按**说话人**处理。请直接根据整句话中**说话人**对 hypothesis "
-                "的表达来判断，不要把任务改写成判断其他主体的立场。"
+                "专家建议：当前句子的主视角按**说话人**处理。请直接根据整句话中**说话人**对 "
+                "hypothesis 的倾向判断，不要改成判断其他主体的倾向。"
             ),
         }
     if basis_is_empty:
@@ -1106,6 +1219,425 @@ basis: {extraction["basis"]}
 专家规则：{expert_guidance["expert_rule"]}
 专家建议：
 {expert_guidance["expert_advice"]}"""
+
+
+def parse_extraction_output(raw_text: str) -> dict[str, str]:
+    subject_type = normalize_subject_type(extract_tag(raw_text, "subject_type"))
+    proposition_subject = extract_tag(raw_text, "proposition_subject")
+    attitude_predicate = extract_tag(raw_text, "attitude_predicate")
+    predicate_type = extract_tag(raw_text, "predicate_type")
+    attitude_hint = extract_tag(raw_text, "attitude_hint")
+    basis = extract_tag(raw_text, "basis")
+    return {
+        "subject_type": subject_type,
+        "proposition_subject": proposition_subject,
+        "attitude_predicate": attitude_predicate,
+        "predicate_type": predicate_type,
+        "attitude_hint": attitude_hint,
+        "basis": basis,
+    }
+
+
+class MockMultiTurnClient:
+    def predict(self, text: str, hypothesis: str, prompt_lang: str) -> dict[str, Any]:
+        first_turn_prompt = build_first_turn_prompt(text, hypothesis, prompt_lang)
+        subject_type = "third_party"
+        proposition_subject = "none"
+        attitude_predicate = "none"
+        predicate_type = "非叙实"
+        attitude_hint = "none"
+        basis = "none"
+
+        if text.startswith(("我", "我们")):
+            subject_type = "speaker"
+        if any(token in text for token in ("他", "她", "他们", "父亲", "观众", "警方", "哥伦布", "约翰", "秦始皇")):
+            subject_type = "third_party"
+
+        if any(token in hypothesis for token in ("他", "她", "他们", "父亲", "主人公", "哥伦布", "约翰")):
+            proposition_subject = hypothesis[: min(len(hypothesis), 12)]
+
+        markers = (
+            "知道", "发现", "意识到", "注意到", "认为", "猜测", "担心", "推测", "估计",
+            "错误地认为", "假装", "吹嘘", "控告", "梦想"
+        )
+        for marker in markers:
+            if marker in text:
+                attitude_predicate = marker
+                break
+
+        hint_map = {
+            "知道": "直接表明说话人或句中视角对命题持较强认定",
+            "发现": "通过发现类表达支持命题方向",
+            "意识到": "带有预设，通常隐含命题成立",
+            "注意到": "带有预设，通常隐含命题成立",
+            "认为": "主观认知判断，本身不等于中性事实",
+            "猜测": "推测性认知表达，方向较弱",
+            "担心": "情绪或意愿相关态度，常带负向倾向",
+            "推测": "推断性表达，需要结合整体语义判断方向",
+            "估计": "弱推断，但可能体现说话人的方向性立场",
+            "错误地认为": "说话人通过纠正或否定对方认知表达反向立场",
+            "假装": "评价性表达，暗示表层说法不可靠",
+            "吹嘘": "评价性表达，带褒贬色彩并暗示说法不可靠",
+            "控告": "带有指控色彩，需要结合整体语义判断",
+            "梦想": "意愿或设想类表达，不直接构成客观事实",
+        }
+        if attitude_predicate in hint_map:
+            attitude_hint = hint_map[attitude_predicate]
+
+        predicate_type_map = {
+            "知道": "正叙实",
+            "发现": "正叙实",
+            "意识到": "正叙实",
+            "注意到": "正叙实",
+            "认为": "非叙实",
+            "猜测": "非叙实",
+            "担心": "非叙实",
+            "推测": "非叙实",
+            "估计": "非叙实",
+            "错误地认为": "反叙实",
+            "假装": "反叙实",
+            "吹嘘": "反叙实",
+            "控告": "非叙实",
+            "梦想": "非叙实",
+        }
+        if attitude_predicate in predicate_type_map:
+            predicate_type = predicate_type_map[attitude_predicate]
+
+        basis_markers = (
+            "根据", "通过", "结果", "账本", "监控", "指纹", "观察", "审计", "专家", "宣布", "事实已经证明"
+        )
+        for marker in basis_markers:
+            if marker in text:
+                basis = marker
+                break
+
+        first_turn_output = (
+            "<think>mock extraction</think>"
+            f"<subject_type>{subject_type}</subject_type>"
+            f"<proposition_subject>{proposition_subject}</proposition_subject>"
+            f"<attitude_predicate>{attitude_predicate}</attitude_predicate>"
+            f"<predicate_type>{predicate_type}</predicate_type>"
+            f"<attitude_hint>{attitude_hint}</attitude_hint>"
+            f"<basis>{basis}</basis>"
+        )
+        extraction = parse_extraction_output(first_turn_output)
+        expert_guidance = build_expert_guidance(extraction, prompt_lang)
+        second_turn_prompt = build_second_turn_prompt(text, hypothesis, extraction, expert_guidance, prompt_lang)
+
+        label = "TRUE"
+        if extraction["basis"] in {"none", "无"} and extraction["predicate_type"] == "非叙实":
+            label = "UNCERTAIN"
+        if extraction["predicate_type"] == "反叙实":
+            label = "FALSE"
+        if extraction["predicate_type"] == "正叙实":
+            label = "TRUE"
+
+        second_turn_output = f"<think>mock decision</think><answer>{label}</answer>"
+        return {
+            "first_turn_prompt": first_turn_prompt,
+            "first_turn_output": first_turn_output,
+            "extraction": extraction,
+            "expert_guidance": expert_guidance,
+            "second_turn_prompt": second_turn_prompt,
+            "second_turn_output": second_turn_output,
+            "pred_label": extract_answer_label(second_turn_output),
+        }
+
+
+def build_first_turn_prompt(text: str, hypothesis: str, prompt_lang: str) -> str:
+    if prompt_lang == "en":
+        return f"""Task: Extract a small set of intermediate fields for factivity reasoning from the given text and hypothesis.
+
+You are not making the final TRUE/FALSE/UNCERTAIN decision yet.
+You only need to extract the fields below so that a later step can infer the speaker's stance.
+
+A predicate-centered view is important here: identify not only the trigger expression itself, but also what kind of predicate it is, because different predicate types guide the speaker's stance differently.
+
+Field definitions:
+1. subject_type:
+   - speaker: the relevant viewpoint in the text is the speaker or narrator
+   - third_party: the relevant viewpoint in the text belongs to someone other than the speaker
+   - none: the relevant viewpoint is absent or not explicitly stated
+2. proposition_subject:
+   - the subject of the proposition expressed by the hypothesis
+   - if absent, output none
+3. attitude_predicate:
+   - the key trigger expression in the sentence that is most useful for judging the **speaker**'s stance toward the hypothesis
+   - it can be a direct stance expression by the **speaker**, or an evaluative, corrective, presuppositional, negative, or otherwise directional expression added by the **speaker** while talking about a third party
+   - do not extract just any ordinary predicate
+4. predicate_type:
+   - classify attitude_predicate into one of the following fixed types:
+     正叙实: the predicate tends to support or presuppose the proposition
+     反叙实: the predicate tends to reject, negate, correct, or undermine the proposition
+     非叙实: the predicate mainly expresses attitude, cognition, speculation, emotion, desire, or other non-factive content, and does not by itself settle the proposition
+5. attitude_hint:
+   - a short abstract hint explaining how attitude_predicate and predicate_type affect the judgment of the **speaker**'s stance in this sentence
+   - do not give the final label
+   - focus on whether it directly expresses the **speaker**'s stance, merely reports a third party's subjective cognitive activity, or lets the **speaker** add evaluation, correction, presupposition, negation, or semantic connotation
+6. basis:
+   - the factual basis, source, evidence, authority, observation, investigation result, correction, or other grounding introduced in the sentence that may support the inference about the **speaker**'s stance
+   - if no such basis is given, output none
+
+Output format:
+You must strictly follow this format and output nothing else:
+<think>your analysis</think>
+<subject_type>speaker</subject_type>
+<proposition_subject>...</proposition_subject>
+<attitude_predicate>...</attitude_predicate>
+<predicate_type>正叙实</predicate_type>
+<attitude_hint>...</attitude_hint>
+<basis>...</basis>
+
+text: {text}
+hypothesis: {hypothesis}"""
+
+    return f"""任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续的述实性判断。
+
+这一步不要直接做 TRUE / FALSE / UNCERTAIN 的最终判断。
+你只需要提取下面这些字段，供下一步推断**说话人**对 hypothesis 的态度。
+
+这里要采用“谓词中心”的视角：不仅要抽取触发表达本身，还要判断它属于哪一类谓词，因为不同谓词类型会以不同方式影响**说话人**的立场。
+
+字段定义：
+1. subject_type：
+   - 说话人：text 中相关视角就是说话人或叙述者
+   - 第三方：text 中相关视角不是说话人，而是其他主体
+   - 无：相关视角缺省或未明确出现
+2. proposition_subject：
+   - hypothesis 所表达命题的主语
+   - 如果没有明确主语，输出 无
+3. attitude_predicate：
+   - 句中最关键、最有助于后续判断**说话人**对 hypothesis 立场的触发表达**谓词**
+   - 它既可以是**说话人**直接表达立场的词语，也可以是**说话人**在谈论第三方时额外加入的评价、纠正、预设、否定或其他方向性表达
+   - 不要随便抽一个普通谓语
+4. predicate_type：
+   - 判断 attitude_predicate 属于以下哪一种固定谓词类型，只能选一个：
+     正叙实：该谓词倾向于支持命题成立，或带有预设命题成立的效果
+     反叙实：该谓词倾向于否定、反驳、纠正、削弱命题成立
+     非叙实：该谓词主要表达认知、推测、情绪、愿望、态度等内容，本身不直接决定命题真值
+5. attitude_hint：
+   - 用一句抽象的话说明 attitude_predicate 和 predicate_type 在本句中如何影响对**说话人**立场的判断
+   - 不要给最终标签
+   - 重点说明它是在直接表达**说话人**立场，还是仅在报告第三方主观认知活动，或者**说话人**是否借它额外加入了评价、纠正、预设、否定或语义褒贬等方向性信息
+6. basis：
+   - 句中出现的、可用于支撑对**说话人**立场推断的事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑
+   - 如果没有这类信息，输出 无
+
+输出要求：
+请严格按照以下格式输出，不要输出其他格式：
+<think>你的分析</think>
+<subject_type>说话人</subject_type>
+<proposition_subject>...</proposition_subject>
+<attitude_predicate>...</attitude_predicate>
+<predicate_type>正叙实</predicate_type>
+<attitude_hint>...</attitude_hint>
+<basis>...</basis>
+
+text: {text}
+hypothesis: {hypothesis}"""
+
+
+def build_second_turn_prompt(
+    text: str,
+    hypothesis: str,
+    extraction: dict[str, str],
+    expert_guidance: dict[str, str],
+    prompt_lang: str,
+) -> str:
+    if prompt_lang == "en":
+        return f"""Task: Use the extracted fields and the original text to determine the final factivity label of the hypothesis.
+
+The extracted fields below are expert-structured information. You should rely mainly on them.
+Use the original text only as a secondary reference for verification. Do not ignore the extracted fields and start over from scratch.
+
+The final label must always be based on the **speaker**'s stance toward the proposition in the hypothesis, not directly on a third party's stance.
+When judging the trigger expression, pay attention to both attitude_predicate itself and its predicate_type.
+
+Follow these rules:
+1. If subject_type is speaker or none, judge directly from the stance expressed by the **speaker** in the sentence.
+2. If subject_type is third_party, do not directly use the third party's stance as the answer.
+3. When subject_type is third_party, first check whether the **speaker** adds extra directional information while talking about that third party. Such information may come from evaluation, correction, negation of the third party's cognition, presupposition, semantic connotation, or support reflected in basis.
+4. predicate_type helps determine how attitude_predicate should be interpreted. A positive factive predicate tends to support the proposition; a negative factive predicate tends to reject or undermine it; a non-factive predicate mainly describes attitude, cognition, speculation, or desire and does not by itself settle the proposition.
+5. If the sentence merely neutrally reports the third party's subjective cognitive activity, and the **speaker** does not add any extra directional signal, then consider UNCERTAIN.
+6. Treat basis as an important clue for whether the **speaker** is supporting some direction, but do not let basis alone decide the label without attitude_predicate, predicate_type, attitude_hint, and the whole sentence.
+7. Finally combine subject_type, attitude_predicate, predicate_type, attitude_hint, basis, and the original sentence to decide whether the **speaker**'s stance is positive, negative, or uncertain.
+
+Decision rule:
+- positive tendency -> TRUE
+- negative tendency -> FALSE
+- no directional stance from the **speaker** -> UNCERTAIN
+
+Output format:
+You must strictly follow this format and output nothing else:
+<think>your analysis</think>
+<answer>TRUE</answer>
+
+The answer must be exactly one of: TRUE, FALSE, UNCERTAIN.
+
+Original text: {text}
+Hypothesis: {hypothesis}
+
+Extracted fields:
+subject_type: {extraction["subject_type"]}
+proposition_subject: {extraction["proposition_subject"]}
+attitude_predicate: {extraction["attitude_predicate"]}
+predicate_type: {extraction["predicate_type"]}
+attitude_hint: {extraction["attitude_hint"]}
+basis: {extraction["basis"]}
+
+Expert rule: {expert_guidance["expert_rule"]}
+Expert advice:
+{expert_guidance["expert_advice"]}"""
+
+    return f"""任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终述实性标签。
+下面的抽取结果是专家提取的结构化信息，你应当主要参考这份信息。原始 text 只作为辅助核对材料，不要忽略抽取结果后重新从头自由发挥。
+
+最终标签永远基于**说话人**对 hypothesis 所表达命题的态度，而不是直接基于第三方自己的态度。
+判断触发表达时，要同时参考 attitude_predicate 本身和它所属的 predicate_type。
+
+请按照以下规则判断：
+1. 如果 subject_type 是“说话人”或“无”，就优先根据句中直接体现的**说话人**立场判断。
+2. 如果 subject_type 是“第三方”，不要直接把第三方态度当成答案。
+3. 当 subject_type 是“第三方”时，先判断**说话人**在转述该第三方态度时，是否额外加入了自己的方向性信息。这些信息可以来自评价、纠正、否定对方认知、预设、语义褒贬，以及 basis 所体现的支撑信息。
+4. predicate_type 用来帮助判断该触发表达的述实方向。正叙实谓词通常倾向于支持命题成立；反叙实谓词通常倾向于否定、反驳或削弱命题成立；非叙实谓词主要描述态度、认知、推测、情绪或愿望，本身不直接决定命题真值。
+5. 如果句子只是中性报告第三方的主观认知活动，而**说话人**没有额外加入任何方向性信号，才考虑判为 UNCERTAIN。
+6. basis 是判断**说话人**是否在为某一方向提供支撑的重要线索，但不能脱离 attitude_predicate、predicate_type、attitude_hint 和整体语义单独决定标签。
+7. 最后结合 subject_type、attitude_predicate、predicate_type、attitude_hint、basis 以及原句整体语义，判断**说话人**的态度究竟是正向、反向还是不确定。
+
+判断规则：
+- 正向倾向 -> TRUE
+- 反向倾向 -> FALSE
+- **说话人**没有体现出方向性立场 -> UNCERTAIN
+
+输出要求：
+请严格按照以下格式输出，不要输出其他格式：
+<think>你的分析</think>
+<answer>TRUE</answer>
+
+其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。
+
+原始 text: {text}
+hypothesis: {hypothesis}
+
+抽取结果：
+subject_type: {extraction["subject_type"]}
+proposition_subject: {extraction["proposition_subject"]}
+attitude_predicate: {extraction["attitude_predicate"]}
+predicate_type: {extraction["predicate_type"]}
+attitude_hint: {extraction["attitude_hint"]}
+basis: {extraction["basis"]}
+
+专家规则：{expert_guidance["expert_rule"]}
+专家建议：
+{expert_guidance["expert_advice"]}"""
+
+
+def _is_third_party_subject(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return normalized == "third_party" or stripped == "第三方" or "第三方" in stripped
+
+
+def _is_speaker_or_none_subject(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return normalized in {"speaker", "none"} or stripped in {"说话人", "无"} or "说话人" in stripped
+
+
+def _is_empty_basis(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return normalized in {"", "none"} or stripped == "无"
+
+
+def build_expert_guidance(extraction: dict[str, str], prompt_lang: str) -> dict[str, str]:
+    subject_type = extraction["subject_type"]
+    basis = extraction["basis"]
+    predicate_type = extraction.get("predicate_type", "非叙实")
+    basis_is_empty = _is_empty_basis(basis)
+    is_third_party = _is_third_party_subject(subject_type)
+
+    predicate_type_hint_en = (
+        " Current predicate_type is "
+        f'"{predicate_type}". Treat it as follows: 正叙实 usually supports the proposition, '
+        '反叙实 usually rejects or undermines the proposition, and 非叙实 mainly expresses attitude, '
+        "cognition, speculation, emotion, or desire and does not by itself settle the proposition."
+    )
+    predicate_type_hint_zh = (
+        f" 当前 predicate_type 为“{predicate_type}”。请这样使用它：正叙实通常倾向于支持命题成立，"
+        "反叙实通常倾向于否定、反驳或削弱命题成立，非叙实主要表达态度、认知、推测、情绪或愿望，"
+        "本身不直接决定命题真值。"
+    )
+
+    if prompt_lang == "en":
+        if not is_third_party:
+            return {
+                "expert_rule": "SPEAKER_MAIN_VIEW",
+                "expert_advice": (
+                    "Expert advice: The main viewpoint of the current sentence should be treated as the "
+                    "**speaker**'s viewpoint. Judge the tendency of the **speaker** toward the hypothesis "
+                    "directly from the whole sentence. Do not rewrite the task into judging some other "
+                    "entity's tendency."
+                    + predicate_type_hint_en
+                ),
+            }
+        if basis_is_empty:
+            return {
+                "expert_rule": "THIRD_PARTY_NO_BASIS",
+                "expert_advice": (
+                    "Expert advice: The relevant subject is not the **speaker**, and there is **no basis** "
+                    "in the sentence. Do not directly convert the third party's stance into the "
+                    "**speaker**'s stance. First check whether the sentence only neutrally reports the "
+                    "third party's subjective cognitive activity, or whether the **speaker** adds an extra "
+                    "directional signal through evaluation, correction, presupposition, negation, or "
+                    "semantic connotation. Only if it is merely neutral reporting with no extra "
+                    "directional signal should you consider UNCERTAIN."
+                    + predicate_type_hint_en
+                ),
+            }
+        return {
+            "expert_rule": "THIRD_PARTY_WITH_BASIS",
+            "expert_advice": (
+                "Expert advice: The relevant subject is not the **speaker**, but there **is basis** in the "
+                "sentence. This usually means the **speaker** is not merely neutral reporting the third "
+                "party's stance, but is introducing information that supports some direction. Treat the "
+                "basis as an important clue for the **speaker**'s implicit stance, and combine it with "
+                "attitude_predicate, predicate_type, attitude_hint, and the whole sentence to decide the "
+                "**speaker**'s direction toward the hypothesis."
+                + predicate_type_hint_en
+            ),
+        }
+
+    if not is_third_party:
+        return {
+            "expert_rule": "SPEAKER_MAIN_VIEW",
+            "expert_advice": (
+                "专家建议：当前句子的主视角按**说话人**处理。请直接根据整句话中**说话人**对 "
+                "hypothesis 的倾向判断，不要改成判断其他主体的倾向。"
+                + predicate_type_hint_zh
+            ),
+        }
+    if basis_is_empty:
+        return {
+            "expert_rule": "THIRD_PARTY_NO_BASIS",
+            "expert_advice": (
+                "专家建议：当前相关主语不是**说话人**，且句中**无basis**。请不要直接把第三方态度当成"
+                "**说话人**的态度。先判断这句话是否只是中性报告第三方的主观认知活动，还是**说话人**通过"
+                "评价、纠正、预设、否定或语义褒贬等表达额外带出了自己的方向性信号。只有在确实只是中性转述、"
+                "且没有额外方向性信号时，才考虑 UNCERTAIN。"
+                + predicate_type_hint_zh
+            ),
+        }
+    return {
+        "expert_rule": "THIRD_PARTY_WITH_BASIS",
+        "expert_advice": (
+            "专家建议：当前相关主语不是**说话人**，且句中**有basis**。这通常说明**说话人**并非完全中性地"
+            "转述第三方态度，而是在引入可支撑某一方向的信息。请把 basis 视为判断**说话人**隐含立场的重要"
+            "线索，并结合 attitude_predicate、predicate_type、attitude_hint 和整体语义，一起判断"
+            "**说话人**对 hypothesis 的倾向。"
+            + predicate_type_hint_zh
+        ),
+    }
 
 
 def main() -> None:
