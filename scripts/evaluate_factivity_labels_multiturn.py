@@ -13,7 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATASET = ROOT / "sample sets" / "sample_20260401.json"
-DEFAULT_OUTPUT_DIR = ROOT / "outputs_v5_MT_revised"
+DEFAULT_OUTPUT_DIR = ROOT / "outputs_v6_MT_fine_grained_expert_guidance"
 VALID_LABELS = ("TRUE", "FALSE", "UNCERTAIN")
 SUBJECT_TYPES = ("说话人", "第三方", "无", "speaker", "third_party", "none")
 
@@ -348,7 +348,7 @@ Expert advice:
 1. 先看相关主语是不是认知主体。
    如果 subject_type 是“说话人”，就优先根据该主语的倾向判断。
 2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。
-   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。
+   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。
 3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。
 4. 判断 attitude_predicate 的方向时，要特别参考 attitude_hint 提供的语义提示。
 5. 最后结合 subject_type、attitude_predicate、attitude_hint、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。
@@ -513,7 +513,11 @@ class OpenAICompatibleMultiTurnClient:
                     temperature=0.3,
                     max_tokens=max_tokens,
                 )
-                content = response.choices[0].message.content
+                content = response.choices[0].message.content.strip()
+                if len(messages)==3:
+                    print('----------')
+                    print(content)
+                    print('----------')
                 if content is None:
                     raise ValueError("Model returned empty content.")
                 return content.strip()
@@ -566,17 +570,224 @@ def make_client(args: argparse.Namespace) -> Any:
     )
 
 
+def build_summary(predictions: list[Prediction]) -> dict[str, Any]:
+    confusion: dict[str, Counter[str]] = defaultdict(Counter)
+    for item in predictions:
+        confusion[item.gold][item.pred] += 1
+
+    total = len(predictions)
+    correct = sum(1 for item in predictions if item.ok)
+    accuracy = correct / total if total else 0.0
+
+    per_label: dict[str, dict[str, Any]] = {}
+    for label in VALID_LABELS:
+        label_items = [item for item in predictions if item.gold == label]
+        label_total = len(label_items)
+        label_correct = sum(1 for item in label_items if item.ok)
+        per_label[label] = {
+            "total": label_total,
+            "correct": label_correct,
+            "accuracy": (label_correct / label_total) if label_total else 0.0,
+        }
+
+    return {
+        "total": total,
+        "correct": correct,
+        "accuracy": accuracy,
+        "per_label": per_label,
+        "confusion": {gold: dict(preds) for gold, preds in confusion.items()},
+    }
+
+
+def prediction_to_dict(item: Prediction) -> dict[str, Any]:
+    return {
+        "id": item.sample_id,
+        "text": item.text,
+        "hypothesis": item.hypothesis,
+        "gold": item.gold,
+        "pred": item.pred,
+        "ok": item.ok,
+        "first_turn_prompt": item.first_turn_prompt,
+        "extraction": item.extraction,
+        "expert_guidance": item.expert_guidance,
+        "first_turn_output": item.first_turn_output,
+        "second_turn_prompt": item.second_turn_prompt,
+        "second_turn_output": item.second_turn_output,
+    }
+
+
+def prediction_from_dict(item: dict[str, Any]) -> Prediction:
+    return Prediction(
+        sample_id=item["id"],
+        text=item["text"],
+        hypothesis=item["hypothesis"],
+        gold=normalize_label(item["gold"]),
+        pred=normalize_label(item["pred"]),
+        ok=bool(item["ok"]),
+        first_turn_prompt=item["first_turn_prompt"],
+        first_turn_output=item["first_turn_output"],
+        extraction=item["extraction"],
+        expert_guidance=item["expert_guidance"],
+        second_turn_prompt=item["second_turn_prompt"],
+        second_turn_output=item["second_turn_output"],
+    )
+
+
+def list_main_result_files(output_dir: Path) -> list[Path]:
+    if not output_dir.exists():
+        return []
+    return sorted(
+        path
+        for path in output_dir.glob("*.json")
+        if "_errors_" not in path.name and path.name.startswith("factivity_label_multiturn_eval_")
+    )
+
+
+def resolve_result_paths(output_dir: Path, provider: str, model: str) -> tuple[Path, Path]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    existing = list_main_result_files(output_dir)
+    if len(existing) > 1:
+        raise SystemExit(
+            "Found multiple non-error result JSON files in the output directory. "
+            "Keep only one resumable result file before rerunning:\n"
+            + "\n".join(str(path) for path in existing)
+        )
+    if existing:
+        result_path = existing[0]
+    else:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        result_path = output_dir / f"factivity_label_multiturn_eval_{provider}_{model}_{timestamp}.json"
+    errors_path = Path(str(result_path).replace("_eval_", "_errors_"))
+    return result_path, errors_path
+
+
+def write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    tmp_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp_path.replace(path)
+
+
+def save_main_results(
+    result_path: Path,
+    dataset_path: Path,
+    provider: str,
+    model: str,
+    prompt_lang: str,
+    predictions: list[Prediction],
+) -> dict[str, Any]:
+    summary = build_summary(predictions)
+    payload = {
+        "dataset": str(dataset_path),
+        "provider": provider,
+        "model": model,
+        "prompt_lang": prompt_lang,
+        "summary": summary,
+        "predictions": [prediction_to_dict(item) for item in predictions],
+    }
+    write_json_atomic(result_path, payload)
+    return summary
+
+
+def save_error_results(
+    errors_path: Path,
+    dataset_path: Path,
+    provider: str,
+    model: str,
+    prompt_lang: str,
+    predictions: list[Prediction],
+    summary: dict[str, Any],
+) -> None:
+    error_payload = {
+        "dataset": str(dataset_path),
+        "provider": provider,
+        "model": model,
+        "prompt_lang": prompt_lang,
+        "summary": summary,
+        "errors": [prediction_to_dict(item) for item in predictions if not item.ok],
+    }
+    write_json_atomic(errors_path, error_payload)
+
+
+def load_resume_predictions(
+    result_path: Path,
+    data: list[dict[str, Any]],
+    dataset_path: Path,
+    provider: str,
+    model: str,
+    prompt_lang: str,
+) -> list[Prediction]:
+    if not result_path.exists():
+        return []
+
+    try:
+        payload = json.loads(result_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise SystemExit(
+            f"Existing result file is not valid JSON and cannot be resumed: {result_path}\n{exc}"
+        ) from exc
+
+    saved_dataset = str(payload.get("dataset", ""))
+    saved_provider = str(payload.get("provider", ""))
+    saved_model = str(payload.get("model", ""))
+    saved_prompt_lang = str(payload.get("prompt_lang", ""))
+    if (
+        saved_dataset and saved_dataset != str(dataset_path)
+        or saved_provider and saved_provider != provider
+        or saved_model and saved_model != model
+        or saved_prompt_lang and saved_prompt_lang != prompt_lang
+    ):
+        raise SystemExit(
+            "Existing result file does not match the current dataset/provider/model/prompt language: "
+            f"{result_path}"
+        )
+
+    raw_predictions = payload.get("predictions", [])
+    if not isinstance(raw_predictions, list):
+        raise SystemExit(f"Invalid predictions field in existing result file: {result_path}")
+
+    predictions = [prediction_from_dict(item) for item in raw_predictions]
+    dataset_by_id = {item["id"]: item for item in data}
+
+    for index, prediction in enumerate(predictions, start=1):
+        if index > len(data):
+            raise SystemExit(
+                f"Existing result file has more predictions than current dataset subset: {result_path}"
+            )
+        expected = data[index - 1]
+        if prediction.sample_id != expected["id"]:
+            raise SystemExit(
+                "Existing result file does not align with the current dataset order at "
+                f"position {index}: expected {expected['id']}, got {prediction.sample_id}"
+            )
+        gold_label = normalize_label(expected["factivity"])
+        if prediction.gold != gold_label:
+            raise SystemExit(
+                f"Gold label mismatch for {prediction.sample_id} in existing result file: {result_path}"
+            )
+        if prediction.text != expected["text"] or prediction.hypothesis != expected["hypothesis"]:
+            raise SystemExit(
+                f"Text or hypothesis mismatch for {prediction.sample_id} in existing result file: {result_path}"
+            )
+
+    return predictions
+
+
 def evaluate(
     data: list[dict[str, Any]],
     client: Any,
     prompt_lang: str,
     sleep_seconds: float,
     verbose: bool,
+    result_path: Path,
+    dataset_path: Path,
+    provider: str,
+    model: str,
+    initial_predictions: list[Prediction] | None = None,
 ) -> tuple[list[Prediction], dict[str, Any]]:
-    predictions: list[Prediction] = []
-    confusion: dict[str, Counter[str]] = defaultdict(Counter)
+    predictions: list[Prediction] = list(initial_predictions or [])
+    start_index = len(predictions)
 
-    for index, item in enumerate(data, start=1):
+    for index, item in enumerate(data[start_index:], start=start_index + 1):
         result = client.predict(item["text"], item["hypothesis"], prompt_lang)
         pred_label = normalize_label(result["pred_label"])
         gold_label = normalize_label(item["factivity"])
@@ -598,7 +809,14 @@ def evaluate(
                 second_turn_output=result["second_turn_output"],
             )
         )
-        confusion[gold_label][pred_label] += 1
+        summary = save_main_results(
+            result_path=result_path,
+            dataset_path=dataset_path,
+            provider=provider,
+            model=model,
+            prompt_lang=prompt_lang,
+            predictions=predictions,
+        )
 
         if verbose:
             print(
@@ -609,98 +827,7 @@ def evaluate(
         if sleep_seconds > 0:
             time.sleep(sleep_seconds)
 
-    total = len(predictions)
-    correct = sum(1 for item in predictions if item.ok)
-    accuracy = correct / total if total else 0.0
-
-    per_label: dict[str, dict[str, Any]] = {}
-    for label in VALID_LABELS:
-        label_items = [item for item in predictions if item.gold == label]
-        label_total = len(label_items)
-        label_correct = sum(1 for item in label_items if item.ok)
-        per_label[label] = {
-            "total": label_total,
-            "correct": label_correct,
-            "accuracy": (label_correct / label_total) if label_total else 0.0,
-        }
-
-    summary = {
-        "total": total,
-        "correct": correct,
-        "accuracy": accuracy,
-        "per_label": per_label,
-        "confusion": {gold: dict(preds) for gold, preds in confusion.items()},
-    }
-    return predictions, summary
-
-
-def save_results(
-    output_dir: Path,
-    dataset_path: Path,
-    provider: str,
-    model: str,
-    prompt_lang: str,
-    predictions: list[Prediction],
-    summary: dict[str, Any],
-) -> tuple[Path, Path]:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    result_path = output_dir / f"factivity_label_multiturn_eval_{provider}_{model}_{timestamp}.json"
-    errors_path = output_dir / f"factivity_label_multiturn_errors_{provider}_{model}_{timestamp}.json"
-
-    payload = {
-        "dataset": str(dataset_path),
-        "provider": provider,
-        "model": model,
-        "prompt_lang": prompt_lang,
-        "summary": summary,
-        "predictions": [
-            {
-                "id": item.sample_id,
-                "text": item.text,
-                "hypothesis": item.hypothesis,
-                "gold": item.gold,
-                "pred": item.pred,
-                "ok": item.ok,
-                "first_turn_prompt": item.first_turn_prompt,
-                "extraction": item.extraction,
-                "expert_guidance": item.expert_guidance,
-                "first_turn_output": item.first_turn_output,
-                "second_turn_prompt": item.second_turn_prompt,
-                "second_turn_output": item.second_turn_output,
-            }
-            for item in predictions
-        ],
-    }
-    result_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-
-    error_payload = {
-        "dataset": str(dataset_path),
-        "provider": provider,
-        "model": model,
-        "prompt_lang": prompt_lang,
-        "summary": summary,
-        "errors": [
-            {
-                "id": item.sample_id,
-                "text": item.text,
-                "hypothesis": item.hypothesis,
-                "gold": item.gold,
-                "pred": item.pred,
-                "ok": item.ok,
-                "first_turn_prompt": item.first_turn_prompt,
-                "extraction": item.extraction,
-                "expert_guidance": item.expert_guidance,
-                "first_turn_output": item.first_turn_output,
-                "second_turn_prompt": item.second_turn_prompt,
-                "second_turn_output": item.second_turn_output,
-            }
-            for item in predictions
-            if not item.ok
-        ],
-    }
-    errors_path.write_text(json.dumps(error_payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    return result_path, errors_path
+    return predictions, build_summary(predictions)
 
 
 def print_summary(summary: dict[str, Any], result_path: Path, errors_path: Path) -> None:
@@ -716,12 +843,293 @@ def print_summary(summary: dict[str, Any], result_path: Path, errors_path: Path)
     print(f"errors: {errors_path}")
 
 
+def _is_third_party_subject(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return (
+        normalized == "third_party"
+        or "第三" in stripped
+        or "third" in normalized
+        or "笁鏂" in stripped
+    )
+
+
+def _is_speaker_or_none_subject(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return (
+        normalized in {"speaker", "none"}
+        or "说话" in stripped
+        or "璇磋瘽" in stripped
+        or stripped == "无"
+        or "鏃" in stripped
+    )
+
+
+def _is_empty_basis(value: str) -> bool:
+    stripped = value.strip()
+    normalized = stripped.lower()
+    return normalized in {"", "none"} or stripped == "无" or "鏃" in stripped
+
+
+def build_expert_guidance(extraction: dict[str, str], prompt_lang: str) -> dict[str, str]:
+    subject_type = extraction["subject_type"]
+    basis = extraction["basis"]
+    basis_is_empty = _is_empty_basis(basis)
+    is_third_party = _is_third_party_subject(subject_type)
+
+    if prompt_lang == "en":
+        if not is_third_party:
+            return {
+                "expert_rule": "SPEAKER_MAIN_VIEW",
+                "expert_advice": (
+                    "Expert advice: The relevant viewpoint here should be treated as the **speaker**'s "
+                    "viewpoint. Judge the stance of the **speaker** toward the hypothesis directly from "
+                    "the whole sentence. Do not rewrite the task into judging some other entity's stance."
+                ),
+            }
+        if basis_is_empty:
+            return {
+                "expert_rule": "THIRD_PARTY_NO_BASIS",
+                "expert_advice": (
+                    "Expert advice: The relevant subject is not the **speaker**, and there is **no basis** "
+                    "in the sentence. Do not directly convert the third party's stance into the "
+                    "**speaker**'s stance. First check whether the sentence only neutrally reports the "
+                    "third party's subjective cognitive activity, or whether the **speaker** adds an extra "
+                    "directional signal through evaluation, correction, presupposition, negation, or "
+                    "semantic connotation. Only if it is merely neutral reporting with no extra "
+                    "directional signal should you consider UNCERTAIN."
+                ),
+            }
+        return {
+            "expert_rule": "THIRD_PARTY_WITH_BASIS",
+            "expert_advice": (
+                "Expert advice: The relevant subject is not the **speaker**, but there **is basis** in the "
+                "sentence. This usually means the **speaker** is not merely neutral reporting the third "
+                "party's stance, but is introducing information that supports some direction. Treat the "
+                "basis as an important clue for the **speaker**'s implicit stance, and combine it with "
+                "attitude_predicate, attitude_hint, and the whole sentence to decide the **speaker**'s "
+                "direction toward the hypothesis."
+            ),
+        }
+
+    if not is_third_party:
+        return {
+            "expert_rule": "SPEAKER_MAIN_VIEW",
+            "expert_advice": (
+                "专家建议：当前相关视角按**说话人**处理。请直接根据整句话中**说话人**对 hypothesis "
+                "的表达来判断，不要把任务改写成判断其他主体的立场。"
+            ),
+        }
+    if basis_is_empty:
+        return {
+            "expert_rule": "THIRD_PARTY_NO_BASIS",
+            "expert_advice": (
+                "专家建议：当前相关主语不是**说话人**，且句中**无basis**。请不要直接把第三方态度当成"
+                "**说话人**的态度。先判断这句话是否只是中性报告第三方的主观认知活动，还是**说话人**通过"
+                "评价、纠正、预设、否定或语义褒贬等表达额外带出了自己的方向性信号。只有在确实只是中性转述、"
+                "且没有额外方向性信号时，才考虑 UNCERTAIN。"
+            ),
+        }
+    return {
+        "expert_rule": "THIRD_PARTY_WITH_BASIS",
+        "expert_advice": (
+            "专家建议：当前相关主语不是**说话人**，且句中**有basis**。这通常说明**说话人**并非完全中性地"
+            "转述第三方态度，而是在引入可支撑某一方向的信息。请把 basis 视为判断**说话人**隐含立场的重要"
+            "线索，并结合 attitude_predicate、attitude_hint 和整体语义，一起判断**说话人**对 "
+            "hypothesis 的倾向。"
+        ),
+    }
+
+
+def build_first_turn_prompt(text: str, hypothesis: str, prompt_lang: str) -> str:
+    if prompt_lang == "en":
+        return f"""Task: Extract a small set of intermediate fields for factivity reasoning from the given text and hypothesis.
+
+You are not making the final TRUE/FALSE/UNCERTAIN decision yet.
+You only need to extract the fields below so that a later step can infer the speaker's stance.
+
+Field definitions:
+1. subject_type:
+   - speaker: the relevant viewpoint in the text is the speaker or narrator
+   - third_party: the relevant viewpoint in the text belongs to someone other than the speaker
+   - none: the relevant viewpoint is absent or not explicitly stated
+2. proposition_subject:
+   - the subject of the proposition expressed by the hypothesis
+   - if absent, output none
+3. attitude_predicate:
+   - the key trigger expression in the sentence that is most useful for judging the **speaker**'s stance toward the hypothesis
+   - it can be a direct stance expression by the **speaker**, or an evaluative, corrective, presuppositional, negative, or otherwise directional expression added by the **speaker** while talking about a third party
+   - do not extract just any ordinary predicate
+4. attitude_hint:
+   - a short abstract hint explaining how attitude_predicate affects the judgment of the **speaker**'s stance in this sentence
+   - do not give the final label
+   - focus on whether it directly expresses the **speaker**'s stance, merely reports a third party's subjective cognitive activity, or lets the **speaker** add evaluation, correction, presupposition, negation, or semantic connotation
+5. basis:
+   - the factual basis, source, evidence, authority, observation, investigation result, correction, or other grounding introduced in the sentence that may support the inference about the **speaker**'s stance
+   - if no such basis is given, output none
+
+Output format:
+You must strictly follow this format and output nothing else:
+<think>your analysis</think>
+<subject_type>speaker</subject_type>
+<proposition_subject>...</proposition_subject>
+<attitude_predicate>...</attitude_predicate>
+<attitude_hint>...</attitude_hint>
+<basis>...</basis>
+
+text: {text}
+hypothesis: {hypothesis}"""
+
+    return f"""任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续的述实性判断。
+
+这一步不要直接做 TRUE / FALSE / UNCERTAIN 的最终判断。
+你只需要提取下面这些字段，供下一步推断**说话人**对 hypothesis 的态度。
+
+字段定义：
+1. subject_type：
+   - 说话人：text 中相关视角就是说话人或叙述者
+   - 第三方：text 中相关视角不是说话人，而是其他主体
+   - 无：相关视角缺省或未明确出现
+2. proposition_subject：
+   - hypothesis 所表达命题的主语
+   - 如果没有明确主语，输出 无
+3. attitude_predicate：
+   - 句中最关键、最有助于后续判断**说话人**对 hypothesis 立场的触发表达
+   - 它既可以是**说话人**直接表达立场的词语，也可以是**说话人**在谈论第三方时额外加入的评价、纠正、预设、否定或其他方向性表达
+   - 不要随便抽一个普通谓语
+4. attitude_hint：
+   - 用一句抽象的话说明 attitude_predicate 在本句中如何影响对**说话人**立场的判断
+   - 不要给最终标签
+   - 重点说明它是在直接表达**说话人**立场，还是仅在报告第三方主观认知活动，或者**说话人**是否借它额外加入了评价、纠正、预设、否定或语义褒贬等方向性信息
+5. basis：
+   - 句中出现的、可用于支撑对**说话人**立场推断的事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑
+   - 如果没有这类信息，输出 无
+
+输出要求：
+请严格按照以下格式输出，不要输出其他格式：
+<think>你的分析</think>
+<subject_type>说话人</subject_type>
+<proposition_subject>...</proposition_subject>
+<attitude_predicate>...</attitude_predicate>
+<attitude_hint>...</attitude_hint>
+<basis>...</basis>
+
+text: {text}
+hypothesis: {hypothesis}"""
+
+
+def build_second_turn_prompt(
+    text: str,
+    hypothesis: str,
+    extraction: dict[str, str],
+    expert_guidance: dict[str, str],
+    prompt_lang: str,
+) -> str:
+    if prompt_lang == "en":
+        return f"""Task: Use the extracted fields and the original text to determine the final factivity label of the hypothesis.
+
+The extracted fields below are expert-structured information. You should rely mainly on them.
+Use the original text only as a secondary reference for verification. Do not ignore the extracted fields and start over from scratch.
+
+The final label must always be based on the **speaker**'s stance toward the proposition in the hypothesis, not directly on a third party's stance.
+
+Follow these rules:
+1. If subject_type is speaker or none, judge directly from the stance expressed by the **speaker** in the sentence.
+2. If subject_type is third_party, do not directly use the third party's stance as the answer.
+3. When subject_type is third_party, first check whether the **speaker** adds extra directional information while talking about that third party. Such information may come from evaluation, correction, negation of the third party's cognition, presupposition, semantic connotation, or support reflected in basis.
+4. If the sentence merely neutrally reports the third party's subjective cognitive activity, and the **speaker** does not add any extra directional signal, then consider UNCERTAIN.
+5. Treat basis as an important clue for whether the **speaker** is supporting some direction, but do not let basis alone decide the label without attitude_predicate, attitude_hint, and the whole sentence.
+6. Finally combine subject_type, attitude_predicate, attitude_hint, basis, and the original sentence to decide whether the **speaker**'s stance is positive, negative, or uncertain.
+
+Decision rule:
+- positive tendency -> TRUE
+- negative tendency -> FALSE
+- no directional stance from the **speaker** -> UNCERTAIN
+
+Output format:
+You must strictly follow this format and output nothing else:
+<think>your analysis</think>
+<answer>TRUE</answer>
+
+The answer must be exactly one of: TRUE, FALSE, UNCERTAIN.
+
+Original text: {text}
+Hypothesis: {hypothesis}
+
+Extracted fields:
+subject_type: {extraction["subject_type"]}
+proposition_subject: {extraction["proposition_subject"]}
+attitude_predicate: {extraction["attitude_predicate"]}
+attitude_hint: {extraction["attitude_hint"]}
+basis: {extraction["basis"]}
+
+Expert rule: {expert_guidance["expert_rule"]}
+Expert advice:
+{expert_guidance["expert_advice"]}"""
+
+    return f"""任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终述实性标签。
+下面的抽取结果是专家提取的结构化信息，你应当主要参考这份信息。原始 text 只作为辅助核对材料，不要忽略抽取结果后重新从头自由发挥。
+
+最终标签永远基于**说话人**对 hypothesis 所表达命题的态度，而不是直接基于第三方自己的态度。
+
+请按照以下规则判断：
+1. 如果 subject_type 是“说话人”或“无”，就优先根据句中直接体现的**说话人**立场判断。
+2. 如果 subject_type 是“第三方”，不要直接把第三方态度当成答案。
+3. 当 subject_type 是“第三方”时，先判断**说话人**在转述该第三方态度时，是否额外加入了自己的方向性信息。这些信息可以来自评价、纠正、否定对方认知、预设、语义褒贬，以及 basis 所体现的支撑信息。
+4. 如果句子只是中性报告第三方的主观认知活动，而**说话人**没有额外加入任何方向性信号，才考虑判为 UNCERTAIN。
+5. basis 是判断**说话人**是否在为某一方向提供支撑的重要线索，但不能脱离 attitude_predicate、attitude_hint 和整体语义单独决定标签。
+6. 最后结合 subject_type、attitude_predicate、attitude_hint、basis 以及原句整体语义，判断**说话人**的态度究竟是正向、反向还是不确定。
+
+判断规则：
+- 正向倾向 -> TRUE
+- 反向倾向 -> FALSE
+- **说话人**没有体现出方向性立场 -> UNCERTAIN
+
+输出要求：
+请严格按照以下格式输出，不要输出其他格式：
+<think>你的分析</think>
+<answer>TRUE</answer>
+
+其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。
+
+原始 text: {text}
+hypothesis: {hypothesis}
+
+抽取结果：
+subject_type: {extraction["subject_type"]}
+proposition_subject: {extraction["proposition_subject"]}
+attitude_predicate: {extraction["attitude_predicate"]}
+attitude_hint: {extraction["attitude_hint"]}
+basis: {extraction["basis"]}
+
+专家规则：{expert_guidance["expert_rule"]}
+专家建议：
+{expert_guidance["expert_advice"]}"""
+
+
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     args = parse_args()
     data = load_dataset(args.dataset)
     if args.max_samples is not None:
         data = data[: args.max_samples]
+
+    model_name = args.model.replace("/", "_")
+    result_path, errors_path = resolve_result_paths(args.output_dir, args.provider, model_name)
+    initial_predictions = load_resume_predictions(
+        result_path=result_path,
+        data=data,
+        dataset_path=args.dataset,
+        provider=args.provider,
+        model=model_name,
+        prompt_lang=args.prompt_lang,
+    )
+    if initial_predictions:
+        print(
+            f"Resuming from {result_path} with {len(initial_predictions)}/{len(data)} completed samples.",
+            flush=True,
+        )
 
     client = make_client(args)
     predictions, summary = evaluate(
@@ -730,12 +1138,25 @@ def main() -> None:
         prompt_lang=args.prompt_lang,
         sleep_seconds=args.sleep_seconds,
         verbose=args.verbose,
-    )
-    result_path, errors_path = save_results(
-        output_dir=args.output_dir,
+        result_path=result_path,
         dataset_path=args.dataset,
         provider=args.provider,
-        model=args.model.replace("/", "_"),
+        model=model_name,
+        initial_predictions=initial_predictions,
+    )
+    summary = save_main_results(
+        result_path=result_path,
+        dataset_path=args.dataset,
+        provider=args.provider,
+        model=model_name,
+        prompt_lang=args.prompt_lang,
+        predictions=predictions,
+    )
+    save_error_results(
+        errors_path=errors_path,
+        dataset_path=args.dataset,
+        provider=args.provider,
+        model=model_name,
         prompt_lang=args.prompt_lang,
         predictions=predictions,
         summary=summary,
