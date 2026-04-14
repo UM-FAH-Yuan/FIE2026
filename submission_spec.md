@@ -24,9 +24,9 @@ The submission file must be a **JSON Array** containing **5,000 prediction resul
 
 ``` json
 [
-  {"id": 1, "factivity": "true", "confidence": 0.87},
-  {"id": 2, "factivity": "false", "confidence": 0.73},
-  {"id": 3, "factivity": "uncertain", "confidence": 0.50}
+  {"id": 1, "factivity": "TRUE", "confidence": 0.87},
+  {"id": 2, "factivity": "FALSE", "confidence": 0.73},
+  {"id": 3, "factivity": "UNCERTAIN", "confidence": 0.50}
 ]
 ```
 
@@ -118,28 +118,28 @@ If any of the above conditions are not met, the system will return the following
 `factivity` 字段的合法取值为：
 The valid values for the `factivity` field are:
 
-    true
-    false
-    uncertain
+    TRUE
+    FALSE
+    UNCERTAIN
 
 若出现其他取值，系统将返回错误：
 If any other value appears, the system will return the following error:
 
-    field value error in line XXX: "factivity" must be one of {"true", "false", "uncertain"}.
+    field value error in line XXX: "factivity" must be one of {"TRUE", "FALSE", "UNCERTAIN"}.
 
 ## 5.3 confidence 
 
-### 情况一 Case 1："factivity" = "true" or "false"
+### 情况一 Case 1："factivity" = "TRUE" or "FALSE"
 
-当 `factivity` 为 `true` 或 `false` 时，`confidence` 字段必须满足：
-When `factivity` is `true` or `false`, the `confidence` field must satisfy:
+当 `factivity` 为 `TRUE` 或 `FALSE` 时，`confidence` 字段必须满足：
+When `factivity` is `TRUE` or `FALSE`, the `confidence` field must satisfy:
 
--   不允许为空 Must not be empty
--   必须为数值类型 Must be a numeric type
--   取值范围 **(0.50, 1.00\]** Value range: **(0.50, 1.00]**
--   **不包含 0.50** **0.50 is not included**
--   **包含 1.00** **1.00 is included**
--   **保留两位小数** **Must be rounded to two decimal places**
+-   不允许为空  Must not be empty
+-   必须为数值类型  Must be a numeric type
+-   取值范围 (0.50, 1.00\]  Value range: (0.50, 1.00]
+-   不包含 0.50  0.50 is not included
+-   包含 1.00  1.00 is included
+-   保留两位小数  Must be rounded to two decimal places
 
 合法示例 Valid examples：
 
@@ -153,10 +153,10 @@ If the requirements are not met, the system will return the following error:
 
     field value error in line XXX: "confidence" must be a number in (0.50, 1.00] with two decimal places.
 
-### 情况二 Case 2："factivity" = "uncertain"
+### 情况二 Case 2："factivity" = "UNCERTAIN"
 
-当 `factivity` 为 `uncertain` 时，`confidence` 字段必须满足：
-When `factivity` is `uncertain`, the `confidence` field must satisfy:
+当 `factivity` 为 `UNCERTAIN` 时，`confidence` 字段必须满足：
+When `factivity` is `UNCERTAIN`, the `confidence` field must satisfy:
 
 -   不允许为空 Must not be empty
 -   必须为数值类型 Must be a numeric type
@@ -175,10 +175,10 @@ If the requirement is not met, the system will return the following error:
 
 ``` json
 [
-  {"id": 1, "factivity": "true", "confidence": 0.87},
-  {"id": 2, "factivity": "false", "confidence": 0.73},
-  {"id": 3, "factivity": "uncertain", "confidence": 0.50},
-  {"id": 4, "factivity": "true", "confidence": 0.91}
+  {"id": 1, "factivity": "TRUE", "confidence": 0.87},
+  {"id": 2, "factivity": "FALSE", "confidence": 0.73},
+  {"id": 3, "factivity": "UNCERTAIN", "confidence": 0.50},
+  {"id": 4, "factivity": "TRUE", "confidence": 0.91}
 ]
 ```
 
@@ -195,7 +195,7 @@ If the requirement is not met, the system will return the following error:
   |id 重复 Duplicate id   | 两条记录 `"id" = 15` Two records with `"id" = 15`|
   |confidence 超范围 confidence out of range| `0.40`, `-0.85`|
   |confidence 小数位错误 confidence with incorrect decimal places |`0.7563`|
-  |uncertain 但 confidence 不为0.50 uncertain but confidence is not 0.50|`{"factivity": "uncertain", "confidence": 0.35}`|
+  |UNCERTAIN 但 confidence 不为0.50  UNCERTAIN but confidence is not 0.50|`{"factivity": "UNCERTAIN", "confidence": 0.35}`|
 
 
 ------------------------------------------------------------------------
