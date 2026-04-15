@@ -33,6 +33,7 @@ Shared Task 1 of the 25th China National Conference on Computational Linguistics
 
 - March–April 2026: [Task announcement](http://cips-cl.org/static/CCL2026/cclEval/taskEvaluation/index.html) (completed) & team registration (ongoing);
 - By April 1, 2026: Release of the [first batch of sample data](sample%20sets/sample_20260401.json) (completed);
+- By May 1, 2026: Release of the Second batch of sample data;
 - May 2026: Official evaluation set released (available for download within 7 days of release); participating teams conduct evaluation within 7 days;
 - June 2026: Participating teams submit technical reports for review;
 - July 2026: Technical report review; acceptance notifications sent;
