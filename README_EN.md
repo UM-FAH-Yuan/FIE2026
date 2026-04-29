@@ -327,32 +327,32 @@ Award structure for each track:
 
 # 11 References (Ongoing Updates)
 
-[1] Chen Zhenyu & Jiang Yining. (2018). Factuality and factivity — The opacity and transparency of the declarative world. *Studies in Linguistics*, (01), 15–37+372–373. doi:CNKI:SUN:YJJK.0.2018-01-002.
+[1] Chen, Zhenyu & Yining Jiang. (2018). Factuality and factivity — The opacity and transparency of the declarative world. *Studies in Linguistics*, (01), 15–37+372–373. doi:CNKI:SUN:YJJK.0.2018-01-002.
 
-[2] Yuan Yulin. (2014). The factivity and negative polarity item licensing of implicit negation verbs. *Language Science*, (06), 575–586. doi:CNKI:SUN:YYKE.0.2014-06-002.
+[2] Yuan, Yulin. (2014). The factivity and negative polarity item licensing of implicit negation verbs. *Language Science*, (06), 575–586. doi:CNKI:SUN:YYKE.0.2014-06-002.
 
-[3] Yuan Yulin. (2020). The factivity drift of "forget"-type verbs and its conceptual structure basis. *Chinese Linguistics*, (05), 515–526+638. doi:CNKI:SUN:YWZG.0.2020-05-001.
+[3] Yuan, Yulin. (2020). The factivity drift of "forget"-type verbs and its conceptual structure basis. *Chinese Linguistics*, (05), 515–526+638. doi:CNKI:SUN:YWZG.0.2020-05-001.
 
-[4] Yuan Yulin. (2020). Factivity and factuality: Two navigational mechanisms of linguistic inference. *Linguistic Research*, (01), 1–9. doi:CNKI:SUN:YWYJ.0.2020-01-001.
+[4] Yuan, Yulin. (2020). Factivity and factuality: Two navigational mechanisms of linguistic inference. *Linguistic Research*, (01), 1–9. doi:CNKI:SUN:YWYJ.0.2020-01-001.
 
-[5] Yuan Yulin. (2020). The factivity drift of "remember" and its conceptual structure basis. *Language Teaching and Linguistic Studies*, (01), 36–47. doi:CNKI:SUN:YYJX.0.2020-01-007.
+[5] Yuan, Yulin. (2020). The factivity drift of "remember" and its conceptual structure basis. *Language Teaching and Linguistic Studies*, (01), 36–47. doi:CNKI:SUN:YYJX.0.2020-01-007.
 
-[6] Yuan Yulin. (2021). The interpretive ambiguity of "pretend" sentences from the perspective of linguistic "polyphony." *Language Strategy Research*, (05), 77–90. doi:10.19689/j.cnki.cn10-1361/h.20210506.
+[6] Yuan, Yulin. (2021). The interpretive ambiguity of "pretend" sentences from the perspective of linguistic "polyphony." *Language Strategy Research*, (05), 77–90. doi:10.19689/j.cnki.cn10-1361/h.20210506.
 
-[7] Zhang Fan. (2024). Types of complements of "pretend"-type verbs and the rationale for truth-value judgments. *Journal of Chinese Linguistics*, (00), 157–170. doi:CNKI:SUN:XBYT.0.2024-00-012.
+[7] Zhang, Fan. (2024). Types of complements of "pretend"-type verbs and the rationale for truth-value judgments. *Journal of Chinese Linguistics*, (00), 157–170. doi:CNKI:SUN:XBYT.0.2024-00-012.
 
-[8] Li Xinliang. (2018). On the factivity and its drift in "feel/sense"-type verbs. *Language Teaching and Linguistic Studies*, (05), 65–75. doi:CNKI:SUN:YYJX.0.2018-05-007.
+[8] Li, Xinliang. (2018). On the factivity and its drift in "feel/sense"-type verbs. *Language Teaching and Linguistic Studies*, (05), 65–75. doi:CNKI:SUN:YYJX.0.2018-05-007.
 
-[9] Li Xinliang. (2020). *A Study on the Factivity of Verbs in Modern Chinese*. Beijing: Peking University Press.
+[9] Li, Xinliang. (2020). *A Study on the Factivity of Verbs in Modern Chinese*. Beijing: Peking University Press.
 
-[10] Li Xinliang & Yuan Yulin. (2016). The grammatical conditions for the truth value of complements of counter-factive verbs and their conceptual motivations. *Contemporary Linguistics*, (02), 194–215. doi:CNKI:SUN:DDYX.0.2016-02-004.
+[10] Li, Xinliang & Yulin Yuan. (2016). The grammatical conditions for the truth value of complements of counter-factive verbs and their conceptual motivations. *Contemporary Linguistics*, (02), 194–215. doi:CNKI:SUN:DDYX.0.2016-02-004.
 
-[11] Li Xinliang & Yuan Yulin. (2017). The factivity of "know" and the grammatical environments conditioning its confidence variation. *Chinese Linguistics*, (01), 42–52+127. doi:CNKI:SUN:YWZG.0.2017-01-003.
+[11] Li, Xinliang & Yulin Yuan. (2017). The factivity of "know" and the grammatical environments conditioning its confidence variation. *Chinese Linguistics*, (01), 42–52+127. doi:CNKI:SUN:YWZG.0.2017-01-003.
 
-[12] Li Xinliang, Yuan Yulin, et al. (2023). *Theories of Factivity and Factuality and Their Applications*. Beijing: Foreign Language Teaching and Research Press.
+[12] Li Xinliang, Yulin Yuan, et al. (2023). *Theories of Factivity and Factuality and Their Applications*. Beijing: Foreign Language Teaching and Research Press.
 
 [13] Kiparsky & Kiparsky. (1970). Fact. In M. Bierwisch & K. Heidolph (eds.), *Progress in Linguistics*. The Hague: Mouton. 143–147.
 
-[14] Yuan Yulin. (2023). The factivity-reversal function and magical effect of the "X cannot believe Y" construction — Expressing the psychological experience of 'reluctantly suspending disbelief after facts overturn beliefs.' *Chinese Linguistics*, (04), 387–399+510.
+[14] Yuan, Yulin. (2023). The factivity-reversal function and magical effect of the "X cannot believe Y" construction — Expressing the psychological experience of 'reluctantly suspending disbelief after facts overturn beliefs.' *Chinese Linguistics*, (04), 387–399+510.
 
 [15]Cong, Guanliang, Junchao Wu, Yang Chen, Tianqi Xun, Derek F. Wong, Bin Li & Yulin Yuan. (2025). Overview of CCL25-Eval Task 4: Factivity Inference Evaluation 2025. Proceedings of the 24rd Chinese National Conference on Computational Linguistics (Volume 2: Evaluations).[https://aclanthology.org/2025.ccl-2.20](https://aclanthology.org/2025.ccl-2.20/) 
