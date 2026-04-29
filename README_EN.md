@@ -15,6 +15,8 @@ Shared Task 1 of the 25th China National Conference on Computational Linguistics
 
 # Recent Updates
 
+![Static Badge](https://img.shields.io/badge/20260429-UPDATE-brightgreen?style=plastic) Updated the `#10 Frequently Asked Questions`.
+
 ![Static Badge](https://img.shields.io/badge/20260407-UPDATE-brightgreen?style=plastic) Updated the "Registration Notes," `#10 Frequently Asked Questions`, and the [Submission File Specifications](submission_spec.md). Thanks to Mr./ Ms. Zhao Peixiang for pointing out the error concerning `confidence` on the "Submission File Specifications" page.
 
 ![Static Badge](https://img.shields.io/badge/20260401-UPDATE-brightgreen?style=plastic) Updated site structure: revised `#5 Evaluation Data` and `#7 Evaluation Criteria`. Added [Sample Set 20260401](sample%20sets/sample_20260401.json).
@@ -322,6 +324,24 @@ Award structure for each track:
 - **Q7**: When the value of `factivity` is `"UNCERTAIN"`, why must the value of `confidence` be uniformly set to `0.50`?
 
   **A7**: This is mainly for the sake of format consistency. When the value of `factivity` is `"UNCERTAIN"`, it means that the listener / large language model is not confident in judging the truth value of the entailed sentence. From the perspective of data type, we treat such "uncertainty" as nominal data contrasted with relatively certain truth-value judgments, but without internal gradience. For "true" or "false," we can say "60% confident that the event described in the complement clause is true" or "90% confident that the event described in the complement clause is false"; but for "uncertain," there is no essential difference between "20% confident" and "45% confident." Therefore, we fix the confidence of `UNCERTAIN` at `0.50`: on the one hand, this keeps the format consistent with the other two labels; on the other hand, it reminds participating teams that, for items whose `factivity` value is `TRUE` or `FALSE`, the confidence must be greater than `0.50` (excluding `0.50`).
+
+- **Q8**: Our annotation results for the corpus provided in April differ from those of the organizers. What should we do?
+
+  **A8**: We have also noticed that there are some annotation disagreements in certain sample datasets, and we are currently discussing corresponding solutions. At present, our adjustments include two points: first, we will restructure the annotation team and revise the annotation guidelines to make the annotation results more interpretable. Second, we will slightly relax the scoring criteria. The current scoring criteria require high accuracy in the model's predictions; we are considering broadening the range of accepted answers and raising the scores for answers falling into adjacent intervals, so that the model will not be heavily penalized when its score falls into an interval adjacent to the standard answer.
+
+- **Q9**: Will there be a meeting to explain matters regarding the submission tasks? Will there be an email notification?
+
+  **A9**: We plan to hold a task briefing session before the formal evaluation. However, since teams are still registering for the competition one after another, in order to avoid repeated explanations, we will send email notifications about the meeting time to the participating teams in due course based on the registration situation.
+
+- **Q10**: Is the use of external data allowed? That is, can we use data other than the officially provided data for training? For example, can we create our own data, or use other open-source data? Is pseudo-labeling allowed, i.e., can we use our model to infer on the test set and add the results as augmented data to the training set?
+
+  **A10**: In the fine-tuning track, data augmentation methods are allowed for training the model (self-annotated data, collecting open-source data, pseudo-labeling, and other methods are all permitted). However, when submitting the code files, you must also provide the augmented datasets with annotations that were used during training.
+
+- **Q11**: Are there any restrictions on the number of parameters? For example, most competitions restrict models to under 10B parameters. Also, if multiple models are used, is there a restriction on the total number of parameters?
+
+  **A11**: In the prompt track, there are no restrictions on the model type or the number of models; teams may decide on their own which closed-source or open-source models to use. In the fine-tuning track, as long as the number of parameters of every model you use does not exceed 10B, there is no limit on the total number of parameters across all models.
+
+
 
 <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
