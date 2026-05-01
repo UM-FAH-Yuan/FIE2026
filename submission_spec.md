@@ -1,4 +1,4 @@
-# 提交文件说明（Submission Format Specification）
+# FIE2026提交文件说明（Submission Format Specification for FIE2026）
 
 参赛者需提交预测结果文件（以下简称 **output 文件**）。假设评测集包含
 **5000
