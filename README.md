@@ -14,6 +14,8 @@
 
 # 近期更新 
 
+![Static Badge](https://img.shields.io/badge/20260501-UPDATE-brightgreen?style=plastic) 更新了评测赛程：第二批样例集将推迟至5月2日发布。
+
 ![Static Badge](https://img.shields.io/badge/20260429-UPDATE-brightgreen?style=plastic) 更新了`#10 常见问题`。
 
 ![Static Badge](https://img.shields.io/badge/20260407-UPDATE-brightgreen?style=plastic) 更新了“报名注意事项”、`#10 常见问题`和“[提交文件说明](submission_spec.md)”。感谢赵培翔先生/女士向我们指出“提交文件说明”页面有关confidence的错误。
@@ -34,7 +36,8 @@
 # 1 评测赛程（暂定） 
 - 2026年3-4月：[评测任务发布](http://cips-cl.org/static/CCL2026/cclEval/taskEvaluation/index.html)（已完成）&参赛队伍报名（正在进行中）；
 - 2026年4月1日前：发布[第一批样例集](sample%20sets/sample_20260401.json)（已完成）；
-- 2026年5月1日前：发布第二批样例集；
+~~- 2026年5月1日前：发布第二批样例集；~~
+- 2026年5月2日：发布第二批样例集；
 - 2026年5月：发布正式评测集（在发布7天内开放下载）；各参赛队伍在7天内开展评测；
 - 2026年6月：参赛队伍提交任务技术报告，用于审稿。
 - 2026年7月：评测论文审稿；发放录用通知；
