@@ -1,10 +1,10 @@
 # FIE2026提交文件说明（Submission Format Specification for FIE2026）
 
 参赛者需提交预测结果文件（以下简称 **output 文件**）。假设评测集包含
-**5000
+**5000（待定）
 条数据**，提交文件必须满足以下格式与规则，否则系统将返回对应错误信息。
 
-Participants are required to submit a prediction result file (hereinafter referred to as the **output file**). Assuming the evaluation set contains **5,000 instances**, the submission file must comply with the following format and rules; otherwise, the system will return the corresponding error message.
+Participants are required to submit a prediction result file (hereinafter referred to as the **output file**). Assuming the evaluation set contains **5,000 (TBD)  instances**, the submission file must comply with the following format and rules; otherwise, the system will return the corresponding error message.
 
 ------------------------------------------------------------------------
 
@@ -17,8 +17,8 @@ The submission file must meet the following requirements:
 -   **文件格式File format：** JSON
 -   **文件编码File encoding：** UTF-8
 
-提交文件应为一个 **JSON 数组（JSON Array）**，数组中包含 **5000条预测结果**，每条结果为一个 JSON 对象。
-The submission file must be a **JSON Array** containing **5,000 prediction results**, where each result is a JSON object.
+提交文件应为一个 **JSON 数组（JSON Array）**，数组中包含 **5000（待定）条预测结果**，每条结果为一个 JSON 对象。
+The submission file must be a **JSON Array** containing **5,000 (TBD) prediction results**, where each result is a JSON object.
 
 示例结构Example structure：
 
@@ -52,11 +52,11 @@ If the submission file is not encoded in UTF-8, the system will return the follo
 
 # 3. 数据条数要求 Data Count Requirements
 
-提交文件中的数据条数必须 **严格等于 5000 条**。
-The number of data instances in the submission file must be **strictly equal to 5,000**.
+提交文件中的数据条数必须 **严格等于 5000（待定）条**。
+The number of data instances in the submission file must be **strictly equal to 5,000 (TBD)**.
 
-若数据条数多于或少于 5000 条，系统将返回错误：
-If the count is greater than or less than 5,000, the system will return the following error:
+若数据条数多于或少于 5000（待定）条，系统将返回错误：
+If the count is greater than or less than 5,000 (TBD), the system will return the following error:
 
     object quantity error: 5000 objects are expected.
 
