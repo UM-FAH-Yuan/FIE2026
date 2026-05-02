@@ -15,6 +15,8 @@ Shared Task 1 of the 25th China National Conference on Computational Linguistics
 
 # Recent Updates
 
+![Static Badge](https://img.shields.io/badge/20260502-UPDATE-brightgreen?style=plastic) Updated the `#5 Evaluation Data`. Added [Sample Set 20260502](sample%20sets/sample_20260502.json).
+
 ![Static Badge](https://img.shields.io/badge/20260429-UPDATE-brightgreen?style=plastic) Updated the `#10 Frequently Asked Questions`.
 
 ![Static Badge](https://img.shields.io/badge/20260407-UPDATE-brightgreen?style=plastic) Updated the "Registration Notes," `#10 Frequently Asked Questions`, and the [Submission File Specifications](submission_spec.md). Thanks to Mr./ Ms. Zhao Peixiang for pointing out the error concerning `confidence` on the "Submission File Specifications" page.
