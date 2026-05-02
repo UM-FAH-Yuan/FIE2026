@@ -14,6 +14,8 @@
 
 # 近期更新 
 
+![Static Badge](https://img.shields.io/badge/20260502-UPDATE-brightgreen?style=plastic) 更新了`#5 评测数据`的内容。新增了[样例集20260502](sample%20sets/sample_20260502.json)。
+
 ![Static Badge](https://img.shields.io/badge/20260501-UPDATE-brightgreen?style=plastic) 更新了评测赛程：第二批样例集将推迟至5月2日发布。更新了`#10 常见问题`。
 
 ![Static Badge](https://img.shields.io/badge/20260429-UPDATE-brightgreen?style=plastic) 更新了`#10 常见问题`。
