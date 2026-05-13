@@ -14,6 +14,8 @@
 
 # 近期更新 
 
+![Static Badge](https://img.shields.io/badge/20260513-UPDATE-brightgreen?style=plastic) 更新了`#4 任务简介`。
+
 ![Static Badge](https://img.shields.io/badge/20260502-UPDATE-brightgreen?style=plastic) 更新了`#5 评测数据`的内容。新增了[样例集20260502](sample%20sets/sample_20260502.json)。
 
 ![Static Badge](https://img.shields.io/badge/20260501-UPDATE-brightgreen?style=plastic) 更新了评测赛程：第二批样例集将推迟至5月2日发布。更新了`#10 常见问题`。
@@ -107,7 +109,7 @@
 
 从例3中“知道”这个动词的使用，可以推理出这样一个事实：“罗昆是中国人”；从例4这个反事实条件句中，可以推理出两个事实：“消防队确实来得很及时”和“大火确实没有烧到顶楼”。
 
-作为语言推理的一种重要的导航机制和手段，真实性推理具有明确的语言形式方面的线索，是机器进行文本蕴涵识别（textual entailment recognizing）、幻觉处理（hallucination solving）、信念修正（belief revision）等任务的重要的语义基础和形式依据，同时对信息检索、信息抽取、问题回答、情感分析等下游任务都具有重要的价值。目前，大型语言模型（Large Language Models, LLMs）日益具备类人的与外界自主交互的能力，也被称为“智能体”（agent）。从话语中获取事实性信息及说话人对事件真实性判断的主观态度，这对于智能体的自主推理和人机交互的顺畅性而言是极为关键的。
+作为语言推理的一种重要的导航机制和手段，真实性推理具有明确的语言形式方面的线索，是机器进行文本蕴涵识别（textual entailment recognizing）、幻觉处理（hallucination solving）、信念修正（belief revision）等任务的重要的语义基础和形式依据，同时对信息检索、信息抽取、问题回答、情感分析等下游任务都具有重要的价值。目前，大型语言模型（Large Language Models, LLMs）逐步发展出类人的自主感知与外部交互能力，以大模型为核心驱动的“智能体”（agent）技术正迎来爆发式增长。从话语中获取事实性信息及说话人对事件真实性判断的主观态度，这对于大模型的自主推理和人机交互的顺畅性而言是极为关键的。
 
 为进一步提升大型语言模型对中文的语义理解能力，实现机器对人类交际话语的深度理解，我们将在FIE2025（[任务网站](https://github.com/UM-FAH-Yuan/FIE2025)；[综述论文](papers%20of%20FIE2025/68.pdf)；[已录用论文](papers%20of%20FIE2025)）的基础上继续推出“第二届中文叙实性推理评测任务”(FIE2026)。
 
