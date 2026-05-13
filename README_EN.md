@@ -15,6 +15,8 @@ Shared Task 1 of the 25th China National Conference on Computational Linguistics
 
 # Recent Updates
 
+![Static Badge](https://img.shields.io/badge/20260513-UPDATE-brightgreen?style=plastic) Updated the `#4 Task Overview`.
+
 ![Static Badge](https://img.shields.io/badge/20260502-UPDATE-brightgreen?style=plastic) Updated the `#5 Evaluation Data`. Added [Sample Set 20260502](sample%20sets/sample_20260502.json).
 
 ![Static Badge](https://img.shields.io/badge/20260429-UPDATE-brightgreen?style=plastic) Updated the `#10 Frequently Asked Questions`.
@@ -104,7 +106,7 @@ Closely related to factivity inference is Counter-Factual Inference (CFI). Both 
 
 From the verb *know* in (3), one can infer the fact: "Rokun is Chinese." From the counterfactual conditional in (4), one can infer two facts: "the fire brigade did arrive in time" and "the fire did not spread to the top floor."
 
-As an important navigational mechanism and means of linguistic inference, factuality inference has clear formal cues in language and constitutes a crucial semantic foundation for machines performing tasks such as textual entailment recognition, hallucination resolution, and belief revision. It also holds significant value for downstream tasks including information retrieval, information extraction, question answering, and sentiment analysis. Today's Large Language Models (LLMs) are increasingly capable of autonomous interaction with the world in human-like ways and are also referred to as "agents." Extracting factual information from discourse and understanding a speaker's subjective attitude toward the truth of events is critically important for the autonomous reasoning of agents and for the fluency of human-computer interaction.
+As an important navigational mechanism and means of linguistic inference, factuality inference has clear formal cues in language and constitutes a crucial semantic foundation for machines performing tasks such as textual entailment recognition, hallucination resolution, and belief revision. It also holds significant value for downstream tasks including information retrieval, information extraction, question answering, and sentiment analysis. Currently, large language models (LLMs) are progressively developing human-like autonomous perception and external interaction capabilities, and agent technologies, which are primarily driven by these models, are experiencing explosive growth. Extracting factual information from discourse, along with the speaker’s subjective attitude regarding the truthfulness of events, is critically important for the autonomous reasoning of large language models and the smoothness of human-computer interaction.
 
 To further enhance the semantic understanding capabilities of large language models for Chinese, and to achieve deep machine comprehension of human communicative discourse, we are launching the "2nd Chinese Factivity Inference Evaluation" (FIE2026), building on the foundation of FIE2025 ([see Website](https://github.com/UM-FAH-Yuan/FIE2025); [see Overview](https://github.com/UM-FAH-Yuan/FIE2026/blob/main/papers%20of%20FIE2025/68.pdf); [see papers](https://github.com/UM-FAH-Yuan/FIE2026/tree/main/papers%20of%20FIE2025)).
 
