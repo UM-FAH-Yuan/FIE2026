@@ -1,0 +1,205 @@
+{
+  "dataset": "E:\\Git Repos\\FIE2026\\sample sets\\sample_20260401.json",
+  "provider": "mock",
+  "model": "gpt-5.4-mini",
+  "prompt_lang": "zh",
+  "summary": {
+    "total": 3,
+    "correct": 2,
+    "accuracy": 0.6666666666666666,
+    "per_label": {
+      "TRUE": {
+        "total": 1,
+        "correct": 1,
+        "accuracy": 1.0
+      },
+      "FALSE": {
+        "total": 1,
+        "correct": 0,
+        "accuracy": 0.0
+      },
+      "UNCERTAIN": {
+        "total": 1,
+        "correct": 1,
+        "accuracy": 1.0
+      }
+    },
+    "confusion": {
+      "TRUE": {
+        "TRUE": 1
+      },
+      "FALSE": {
+        "UNCERTAIN": 1
+      },
+      "UNCERTAIN": {
+        "UNCERTAIN": 1
+      }
+    },
+    "confidence_tier_summary": {
+      "total": 3,
+      "correct": 2,
+      "accuracy": 0.6666666666666666,
+      "per_tier": {
+        "强": {
+          "total": 2,
+          "correct": 1,
+          "accuracy": 0.5
+        },
+        "非叙实": {
+          "total": 1,
+          "correct": 1,
+          "accuracy": 1.0
+        }
+      },
+      "confusion": {
+        "强": {
+          "强": 1,
+          "非叙实": 1
+        },
+        "非叙实": {
+          "非叙实": 1
+        }
+      }
+    },
+    "final_tier_summary": {
+      "total": 3,
+      "correct": 2,
+      "accuracy": 0.6666666666666666,
+      "per_tier": {
+        "强反叙实": {
+          "total": 1,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "非叙实": {
+          "total": 1,
+          "correct": 1,
+          "accuracy": 1.0
+        },
+        "强正叙实": {
+          "total": 1,
+          "correct": 1,
+          "accuracy": 1.0
+        }
+      },
+      "confusion": {
+        "强正叙实": {
+          "强正叙实": 1
+        },
+        "强反叙实": {
+          "非叙实": 1
+        },
+        "非叙实": {
+          "非叙实": 1
+        }
+      }
+    }
+  },
+  "predictions": [
+    {
+      "id": "sp_001",
+      "text": "老张并没有注意到她今天穿了一件红色的连衣裙。",
+      "hypothesis": "她今天穿了一件红色的连衣裙。",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "gold_factivity": "TRUE",
+      "pred_factivity": "TRUE",
+      "factivity_ok": true,
+      "gold_confidence_tier": "强",
+      "pred_confidence_tier": "强",
+      "confidence_tier_ok": true,
+      "gold_final_tier": "强正叙实",
+      "pred_final_tier": "强正叙实",
+      "final_tier_ok": true,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续的蕴含属性判断。\n\n这一步不要直接做 TRUE / FALSE / UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，用于后续推断 **说话人** 对 hypothesis 的态度。\n\n请注意，这里的抽取是“谓词中心”的：\n你不仅要找出体现立场的关键触发表达，还要判断该表达属于哪一类谓词，因为不同类型的谓词会以不同方式影响 **说话人** 的立场。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关视角就是说话人或叙述者本身\n   - 第三方：text 中相关视角不属于说话人，而属于其他主体\n   - 无：相关视角缺省，或 hypothesis 中无明确对应主体\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - 句中最关键、最有助于判断 **说话人** 对 hypothesis 立场的触发表达\n   - 它可以是 **说话人** 直接表达立场的表达，也可以是 **说话人** 在谈论第三方时额外加入的评价、纠正、预设、否定或其他方向性表达\n   - 不要抽取普通谓词，要抽取“体现命题倾向的关键触发表达”\n4. predicate_type：\n   - 判断 attitude_predicate 属于以下哪一种固定谓词类型，只能选一个：\n     正叙实：该谓词通常倾向于支持命题成立，或带有预设命题成立的效果\n     反叙实：该谓词通常倾向于否定、反驳、纠正或削弱命题成立\n     非叙实：该谓词主要表达态度、认知、推测、情绪或愿望，本身不直接决定命题真值\n5. attitude_hint：\n   - 用一句简短的话说明 attitude_predicate 和 predicate_type 在本句中如何影响对 **说话人** 立场的判断\n   - 不要给最终标签\n   - 重点说明：它是在直接体现 **说话人** 的立场，还是在中性转述第三方主观活动，还是让 **说话人** 额外带出了评价、纠正、预设、否定、语义褒贬等方向性信息\n6. basis：\n   - 句中出现的、可用于支持推断 **说话人** 立场的事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑\n   - 如果没有这类信息，输出 无\n\n输出格式：\n请严格按照以下格式输出，不要输出其他内容：\n<think>简短分析</think>\n<subject_type>说话人/第三方/无</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<predicate_type>正叙实/反叙实/非叙实</predicate_type>\n<attitude_hint>...</attitude_hint>\n<basis>...</basis>\n\ntext: 老张并没有注意到她今天穿了一件红色的连衣裙。\nhypothesis: 她今天穿了一件红色的连衣裙。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "她今天穿了一件红色的连衣",
+        "attitude_predicate": "注意到",
+        "predicate_type": "正叙实",
+        "attitude_hint": "带有预设，通常隐含命题成立",
+        "basis": "none"
+      },
+      "expert_guidance": {
+        "expert_rule": "THIRD_PARTY_NO_BASIS",
+        "expert_advice": "专家建议：当前相关主语不是 **说话人**，且句中 **无 basis**。请不要直接把第三方态度当成 **说话人** 的态度。\n\n在这种情况下，谓词类型尤其重要：当前 predicate_type 为“正叙实”。如果 attitude_predicate 属于非叙实，通常先表示第三方的认知、推测、情绪、愿望或态度；这时要进一步判断，**说话人** 是否只是中性地转述第三方的主观状态。只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑 UNCERTAIN。\n\n如果 attitude_predicate 属于正叙实或反叙实，则往往说明 **说话人** 在转述第三方态度时，已经通过该表达本身额外带出了支持、否定、纠正、反驳或削弱等方向，此时应优先判断 **说话人** 对 hypothesis 的倾向，而不是停留在第三方自己的态度上。"
+      },
+      "first_turn_output": "<think>mock extraction</think><subject_type>third_party</subject_type><proposition_subject>她今天穿了一件红色的连衣</proposition_subject><attitude_predicate>注意到</attitude_predicate><predicate_type>正叙实</predicate_type><attitude_hint>带有预设，通常隐含命题成立</attitude_hint><basis>none</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终蕴含属性标签。\n\n下面的抽取结果是专家提取的结构化信息，你应当主要参考这份信息。\n原始 text 只作为辅助核对材料，不要忽略抽取结果后重新从头自由发挥。\n\n最终标签永远基于 **说话人** 对 hypothesis 所表达命题的态度，而不是直接基于第三方自己的态度。\n在判断时，要同时参考 attitude_predicate 本身和它所属的 predicate_type。\n\n请按照以下规则判断：\n1. 如果 subject_type 是“说话人”或“无”，优先根据整句话中 **说话人** 的立场直接判断。\n2. 如果 subject_type 是“第三方”，不要直接把第三方态度当成答案。\n3. 当 subject_type 是“第三方”时，先判断 **说话人** 在转述该第三方时，是否额外加入了自己的方向性信息。这些信息可以来自评价、纠正、否定对方认知、预设、语义上的褒贬，以及 basis 所体现的支撑信息。\n4. 同时结合 predicate_type 理解 attitude_predicate 的方向：\n   - 如果 predicate_type 是“正叙实”，通常说明该表达倾向于支持 hypothesis 成立；\n   - 如果 predicate_type 是“反叙实”，通常说明该表达倾向于否定、反驳或削弱 hypothesis；\n   - 如果 predicate_type 是“非叙实”，通常说明该表达主要体现态度、认知、推测、情绪或愿望，本身未必直接决定命题真值。\n5. predicate_type 不能脱离 **说话人** 视角机械使用：\n   - 当主视角按 **说话人** 处理时，即使 predicate_type 是“非叙实”，只要整句话已经体现出 **说话人** 对 hypothesis 的方向性倾向，仍应据此判断，而不是机械地判为 UNCERTAIN。\n   - 当主视角不是 **说话人** 时，如果 predicate_type 是“非叙实”，要特别注意这是否只是对第三方主观状态的中性转述；只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑判为 UNCERTAIN。\n   - 当主视角不是 **说话人** 时，如果 predicate_type 是“正叙实”或“反叙实”，则要进一步判断该谓词是否说明 **说话人** 已经借该表达额外带出了支持、否定、纠正、反驳或削弱等方向。\n6. basis 是判断 **说话人** 是否在为某一方向提供支撑的重要线索，但不能脱离 attitude_predicate、predicate_type、attitude_hint 和整体语义单独决定标签。\n7. 最后结合 subject_type、attitude_predicate、predicate_type、attitude_hint、basis 以及原句整体语义，判断 **说话人** 的态度究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- **说话人** 没有体现出方向性立场 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 老张并没有注意到她今天穿了一件红色的连衣裙。\nhypothesis: 她今天穿了一件红色的连衣裙。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 她今天穿了一件红色的连衣\nattitude_predicate: 注意到\npredicate_type: 正叙实\nattitude_hint: 带有预设，通常隐含命题成立\nbasis: none\n\n专家规则：THIRD_PARTY_NO_BASIS\n专家建议：\n专家建议：当前相关主语不是 **说话人**，且句中 **无 basis**。请不要直接把第三方态度当成 **说话人** 的态度。\n\n在这种情况下，谓词类型尤其重要：当前 predicate_type 为“正叙实”。如果 attitude_predicate 属于非叙实，通常先表示第三方的认知、推测、情绪、愿望或态度；这时要进一步判断，**说话人** 是否只是中性地转述第三方的主观状态。只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑 UNCERTAIN。\n\n如果 attitude_predicate 属于正叙实或反叙实，则往往说明 **说话人** 在转述第三方态度时，已经通过该表达本身额外带出了支持、否定、纠正、反驳或削弱等方向，此时应优先判断 **说话人** 对 hypothesis 的倾向，而不是停留在第三方自己的态度上。",
+      "second_turn_output": "<think>mock decision</think><answer>TRUE</answer>",
+      "third_turn_prompt": "任务：在已经给定 silver truth 的基础上，只判断当前样本的 confidence tier。\n\n注意：\n1. 第二轮已经给出了 silver truth，它是当前样本的既定判断结果。\n2. 你现在不能重新判断 hypothesis 是 TRUE、FALSE 或 UNCERTAIN。\n3. 你现在唯一的任务，是判断：在这个既定判断结果下，**说话人** 对 hypothesis 的倾向强度属于哪一个 confidence tier。\n4. 这里的 confidence tier 表示 **说话人** 对 hypothesis 的倾向强弱，而不是模型对自己答案的自信度。\n5. 你只能从以下四个 confidence tier 中选择一个：\n- 弱\n- 较弱\n- 较强\n- 强\n\n当前 silver truth：TRUE\n\n请根据以下材料进行判断：\n- 原始 text\n- hypothesis\n- 第一轮抽取结果\n- 第二轮的 silver truth\n\n再次强调：\n- 不要重新判断 factivity\n- 不要输出 TRUE、FALSE、UNCERTAIN\n- 不要输出“正叙实”“反叙实”“非叙实”\n- 只输出一个 confidence tier：弱 / 较弱 / 较强 / 强\n- 这里的 confidence tier 指的是 **说话人** 对 hypothesis 的倾向强弱等级，是在既定 silver truth 下对 **说话人** 立场强度的进一步分档，不是模型对自己答案的自信度\n\n输出格式：\n请严格按照以下格式输出，不要输出其他内容：\n<think>简短分析</think>\n<confidence_tier>弱/较弱/较强/强</confidence_tier>\n\n原始 text: 老张并没有注意到她今天穿了一件红色的连衣裙。\nhypothesis: 她今天穿了一件红色的连衣裙。\n\n第一轮抽取结果：\nsubject_type: 第三方\nproposition_subject: 她今天穿了一件红色的连衣\nattitude_predicate: 注意到\npredicate_type: 正叙实\nattitude_hint: 带有预设，通常隐含命题成立\nbasis: none\n\n第二轮结果：\nsilver_truth: TRUE",
+      "third_turn_output": "<think>mock tier decision</think><confidence_tier>强</confidence_tier>"
+    },
+    {
+      "id": "sp_002",
+      "text": "他错误地认为地球是平的。",
+      "hypothesis": "地球是平的。",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "gold_factivity": "FALSE",
+      "pred_factivity": "UNCERTAIN",
+      "factivity_ok": false,
+      "gold_confidence_tier": "强",
+      "pred_confidence_tier": "非叙实",
+      "confidence_tier_ok": false,
+      "gold_final_tier": "强反叙实",
+      "pred_final_tier": "非叙实",
+      "final_tier_ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续的蕴含属性判断。\n\n这一步不要直接做 TRUE / FALSE / UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，用于后续推断 **说话人** 对 hypothesis 的态度。\n\n请注意，这里的抽取是“谓词中心”的：\n你不仅要找出体现立场的关键触发表达，还要判断该表达属于哪一类谓词，因为不同类型的谓词会以不同方式影响 **说话人** 的立场。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关视角就是说话人或叙述者本身\n   - 第三方：text 中相关视角不属于说话人，而属于其他主体\n   - 无：相关视角缺省，或 hypothesis 中无明确对应主体\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - 句中最关键、最有助于判断 **说话人** 对 hypothesis 立场的触发表达\n   - 它可以是 **说话人** 直接表达立场的表达，也可以是 **说话人** 在谈论第三方时额外加入的评价、纠正、预设、否定或其他方向性表达\n   - 不要抽取普通谓词，要抽取“体现命题倾向的关键触发表达”\n4. predicate_type：\n   - 判断 attitude_predicate 属于以下哪一种固定谓词类型，只能选一个：\n     正叙实：该谓词通常倾向于支持命题成立，或带有预设命题成立的效果\n     反叙实：该谓词通常倾向于否定、反驳、纠正或削弱命题成立\n     非叙实：该谓词主要表达态度、认知、推测、情绪或愿望，本身不直接决定命题真值\n5. attitude_hint：\n   - 用一句简短的话说明 attitude_predicate 和 predicate_type 在本句中如何影响对 **说话人** 立场的判断\n   - 不要给最终标签\n   - 重点说明：它是在直接体现 **说话人** 的立场，还是在中性转述第三方主观活动，还是让 **说话人** 额外带出了评价、纠正、预设、否定、语义褒贬等方向性信息\n6. basis：\n   - 句中出现的、可用于支持推断 **说话人** 立场的事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑\n   - 如果没有这类信息，输出 无\n\n输出格式：\n请严格按照以下格式输出，不要输出其他内容：\n<think>简短分析</think>\n<subject_type>说话人/第三方/无</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<predicate_type>正叙实/反叙实/非叙实</predicate_type>\n<attitude_hint>...</attitude_hint>\n<basis>...</basis>\n\ntext: 他错误地认为地球是平的。\nhypothesis: 地球是平的。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "none",
+        "attitude_predicate": "认为",
+        "predicate_type": "非叙实",
+        "attitude_hint": "主观认知判断，本身不等于中性事实",
+        "basis": "none"
+      },
+      "expert_guidance": {
+        "expert_rule": "THIRD_PARTY_NO_BASIS",
+        "expert_advice": "专家建议：当前相关主语不是 **说话人**，且句中 **无 basis**。请不要直接把第三方态度当成 **说话人** 的态度。\n\n在这种情况下，谓词类型尤其重要：当前 predicate_type 为“非叙实”。如果 attitude_predicate 属于非叙实，通常先表示第三方的认知、推测、情绪、愿望或态度；这时要进一步判断，**说话人** 是否只是中性地转述第三方的主观状态。只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑 UNCERTAIN。\n\n如果 attitude_predicate 属于正叙实或反叙实，则往往说明 **说话人** 在转述第三方态度时，已经通过该表达本身额外带出了支持、否定、纠正、反驳或削弱等方向，此时应优先判断 **说话人** 对 hypothesis 的倾向，而不是停留在第三方自己的态度上。"
+      },
+      "first_turn_output": "<think>mock extraction</think><subject_type>third_party</subject_type><proposition_subject>none</proposition_subject><attitude_predicate>认为</attitude_predicate><predicate_type>非叙实</predicate_type><attitude_hint>主观认知判断，本身不等于中性事实</attitude_hint><basis>none</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终蕴含属性标签。\n\n下面的抽取结果是专家提取的结构化信息，你应当主要参考这份信息。\n原始 text 只作为辅助核对材料，不要忽略抽取结果后重新从头自由发挥。\n\n最终标签永远基于 **说话人** 对 hypothesis 所表达命题的态度，而不是直接基于第三方自己的态度。\n在判断时，要同时参考 attitude_predicate 本身和它所属的 predicate_type。\n\n请按照以下规则判断：\n1. 如果 subject_type 是“说话人”或“无”，优先根据整句话中 **说话人** 的立场直接判断。\n2. 如果 subject_type 是“第三方”，不要直接把第三方态度当成答案。\n3. 当 subject_type 是“第三方”时，先判断 **说话人** 在转述该第三方时，是否额外加入了自己的方向性信息。这些信息可以来自评价、纠正、否定对方认知、预设、语义上的褒贬，以及 basis 所体现的支撑信息。\n4. 同时结合 predicate_type 理解 attitude_predicate 的方向：\n   - 如果 predicate_type 是“正叙实”，通常说明该表达倾向于支持 hypothesis 成立；\n   - 如果 predicate_type 是“反叙实”，通常说明该表达倾向于否定、反驳或削弱 hypothesis；\n   - 如果 predicate_type 是“非叙实”，通常说明该表达主要体现态度、认知、推测、情绪或愿望，本身未必直接决定命题真值。\n5. predicate_type 不能脱离 **说话人** 视角机械使用：\n   - 当主视角按 **说话人** 处理时，即使 predicate_type 是“非叙实”，只要整句话已经体现出 **说话人** 对 hypothesis 的方向性倾向，仍应据此判断，而不是机械地判为 UNCERTAIN。\n   - 当主视角不是 **说话人** 时，如果 predicate_type 是“非叙实”，要特别注意这是否只是对第三方主观状态的中性转述；只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑判为 UNCERTAIN。\n   - 当主视角不是 **说话人** 时，如果 predicate_type 是“正叙实”或“反叙实”，则要进一步判断该谓词是否说明 **说话人** 已经借该表达额外带出了支持、否定、纠正、反驳或削弱等方向。\n6. basis 是判断 **说话人** 是否在为某一方向提供支撑的重要线索，但不能脱离 attitude_predicate、predicate_type、attitude_hint 和整体语义单独决定标签。\n7. 最后结合 subject_type、attitude_predicate、predicate_type、attitude_hint、basis 以及原句整体语义，判断 **说话人** 的态度究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- **说话人** 没有体现出方向性立场 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 他错误地认为地球是平的。\nhypothesis: 地球是平的。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: none\nattitude_predicate: 认为\npredicate_type: 非叙实\nattitude_hint: 主观认知判断，本身不等于中性事实\nbasis: none\n\n专家规则：THIRD_PARTY_NO_BASIS\n专家建议：\n专家建议：当前相关主语不是 **说话人**，且句中 **无 basis**。请不要直接把第三方态度当成 **说话人** 的态度。\n\n在这种情况下，谓词类型尤其重要：当前 predicate_type 为“非叙实”。如果 attitude_predicate 属于非叙实，通常先表示第三方的认知、推测、情绪、愿望或态度；这时要进一步判断，**说话人** 是否只是中性地转述第三方的主观状态。只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑 UNCERTAIN。\n\n如果 attitude_predicate 属于正叙实或反叙实，则往往说明 **说话人** 在转述第三方态度时，已经通过该表达本身额外带出了支持、否定、纠正、反驳或削弱等方向，此时应优先判断 **说话人** 对 hypothesis 的倾向，而不是停留在第三方自己的态度上。",
+      "second_turn_output": "<think>mock decision</think><answer>UNCERTAIN</answer>",
+      "third_turn_prompt": "",
+      "third_turn_output": "[SKIPPED: second-turn silver truth is UNCERTAIN]"
+    },
+    {
+      "id": "sp_003",
+      "text": "他认为那家新开的餐厅定价过高，普通工薪阶层根本消费不起。",
+      "hypothesis": "新开的餐厅定价过高。",
+      "gold": "UNCERTAIN",
+      "pred": "UNCERTAIN",
+      "ok": true,
+      "gold_factivity": "UNCERTAIN",
+      "pred_factivity": "UNCERTAIN",
+      "factivity_ok": true,
+      "gold_confidence_tier": "非叙实",
+      "pred_confidence_tier": "非叙实",
+      "confidence_tier_ok": true,
+      "gold_final_tier": "非叙实",
+      "pred_final_tier": "非叙实",
+      "final_tier_ok": true,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续的蕴含属性判断。\n\n这一步不要直接做 TRUE / FALSE / UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，用于后续推断 **说话人** 对 hypothesis 的态度。\n\n请注意，这里的抽取是“谓词中心”的：\n你不仅要找出体现立场的关键触发表达，还要判断该表达属于哪一类谓词，因为不同类型的谓词会以不同方式影响 **说话人** 的立场。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关视角就是说话人或叙述者本身\n   - 第三方：text 中相关视角不属于说话人，而属于其他主体\n   - 无：相关视角缺省，或 hypothesis 中无明确对应主体\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - 句中最关键、最有助于判断 **说话人** 对 hypothesis 立场的触发表达\n   - 它可以是 **说话人** 直接表达立场的表达，也可以是 **说话人** 在谈论第三方时额外加入的评价、纠正、预设、否定或其他方向性表达\n   - 不要抽取普通谓词，要抽取“体现命题倾向的关键触发表达”\n4. predicate_type：\n   - 判断 attitude_predicate 属于以下哪一种固定谓词类型，只能选一个：\n     正叙实：该谓词通常倾向于支持命题成立，或带有预设命题成立的效果\n     反叙实：该谓词通常倾向于否定、反驳、纠正或削弱命题成立\n     非叙实：该谓词主要表达态度、认知、推测、情绪或愿望，本身不直接决定命题真值\n5. attitude_hint：\n   - 用一句简短的话说明 attitude_predicate 和 predicate_type 在本句中如何影响对 **说话人** 立场的判断\n   - 不要给最终标签\n   - 重点说明：它是在直接体现 **说话人** 的立场，还是在中性转述第三方主观活动，还是让 **说话人** 额外带出了评价、纠正、预设、否定、语义褒贬等方向性信息\n6. basis：\n   - 句中出现的、可用于支持推断 **说话人** 立场的事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑\n   - 如果没有这类信息，输出 无\n\n输出格式：\n请严格按照以下格式输出，不要输出其他内容：\n<think>简短分析</think>\n<subject_type>说话人/第三方/无</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<predicate_type>正叙实/反叙实/非叙实</predicate_type>\n<attitude_hint>...</attitude_hint>\n<basis>...</basis>\n\ntext: 他认为那家新开的餐厅定价过高，普通工薪阶层根本消费不起。\nhypothesis: 新开的餐厅定价过高。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "none",
+        "attitude_predicate": "认为",
+        "predicate_type": "非叙实",
+        "attitude_hint": "主观认知判断，本身不等于中性事实",
+        "basis": "none"
+      },
+      "expert_guidance": {
+        "expert_rule": "THIRD_PARTY_NO_BASIS",
+        "expert_advice": "专家建议：当前相关主语不是 **说话人**，且句中 **无 basis**。请不要直接把第三方态度当成 **说话人** 的态度。\n\n在这种情况下，谓词类型尤其重要：当前 predicate_type 为“非叙实”。如果 attitude_predicate 属于非叙实，通常先表示第三方的认知、推测、情绪、愿望或态度；这时要进一步判断，**说话人** 是否只是中性地转述第三方的主观状态。只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑 UNCERTAIN。\n\n如果 attitude_predicate 属于正叙实或反叙实，则往往说明 **说话人** 在转述第三方态度时，已经通过该表达本身额外带出了支持、否定、纠正、反驳或削弱等方向，此时应优先判断 **说话人** 对 hypothesis 的倾向，而不是停留在第三方自己的态度上。"
+      },
+      "first_turn_output": "<think>mock extraction</think><subject_type>third_party</subject_type><proposition_subject>none</proposition_subject><attitude_predicate>认为</attitude_predicate><predicate_type>非叙实</predicate_type><attitude_hint>主观认知判断，本身不等于中性事实</attitude_hint><basis>none</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终蕴含属性标签。\n\n下面的抽取结果是专家提取的结构化信息，你应当主要参考这份信息。\n原始 text 只作为辅助核对材料，不要忽略抽取结果后重新从头自由发挥。\n\n最终标签永远基于 **说话人** 对 hypothesis 所表达命题的态度，而不是直接基于第三方自己的态度。\n在判断时，要同时参考 attitude_predicate 本身和它所属的 predicate_type。\n\n请按照以下规则判断：\n1. 如果 subject_type 是“说话人”或“无”，优先根据整句话中 **说话人** 的立场直接判断。\n2. 如果 subject_type 是“第三方”，不要直接把第三方态度当成答案。\n3. 当 subject_type 是“第三方”时，先判断 **说话人** 在转述该第三方时，是否额外加入了自己的方向性信息。这些信息可以来自评价、纠正、否定对方认知、预设、语义上的褒贬，以及 basis 所体现的支撑信息。\n4. 同时结合 predicate_type 理解 attitude_predicate 的方向：\n   - 如果 predicate_type 是“正叙实”，通常说明该表达倾向于支持 hypothesis 成立；\n   - 如果 predicate_type 是“反叙实”，通常说明该表达倾向于否定、反驳或削弱 hypothesis；\n   - 如果 predicate_type 是“非叙实”，通常说明该表达主要体现态度、认知、推测、情绪或愿望，本身未必直接决定命题真值。\n5. predicate_type 不能脱离 **说话人** 视角机械使用：\n   - 当主视角按 **说话人** 处理时，即使 predicate_type 是“非叙实”，只要整句话已经体现出 **说话人** 对 hypothesis 的方向性倾向，仍应据此判断，而不是机械地判为 UNCERTAIN。\n   - 当主视角不是 **说话人** 时，如果 predicate_type 是“非叙实”，要特别注意这是否只是对第三方主观状态的中性转述；只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑判为 UNCERTAIN。\n   - 当主视角不是 **说话人** 时，如果 predicate_type 是“正叙实”或“反叙实”，则要进一步判断该谓词是否说明 **说话人** 已经借该表达额外带出了支持、否定、纠正、反驳或削弱等方向。\n6. basis 是判断 **说话人** 是否在为某一方向提供支撑的重要线索，但不能脱离 attitude_predicate、predicate_type、attitude_hint 和整体语义单独决定标签。\n7. 最后结合 subject_type、attitude_predicate、predicate_type、attitude_hint、basis 以及原句整体语义，判断 **说话人** 的态度究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- **说话人** 没有体现出方向性立场 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 他认为那家新开的餐厅定价过高，普通工薪阶层根本消费不起。\nhypothesis: 新开的餐厅定价过高。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: none\nattitude_predicate: 认为\npredicate_type: 非叙实\nattitude_hint: 主观认知判断，本身不等于中性事实\nbasis: none\n\n专家规则：THIRD_PARTY_NO_BASIS\n专家建议：\n专家建议：当前相关主语不是 **说话人**，且句中 **无 basis**。请不要直接把第三方态度当成 **说话人** 的态度。\n\n在这种情况下，谓词类型尤其重要：当前 predicate_type 为“非叙实”。如果 attitude_predicate 属于非叙实，通常先表示第三方的认知、推测、情绪、愿望或态度；这时要进一步判断，**说话人** 是否只是中性地转述第三方的主观状态。只有在确实只是中性转述，且 **说话人** 没有额外带出方向性信息时，才考虑 UNCERTAIN。\n\n如果 attitude_predicate 属于正叙实或反叙实，则往往说明 **说话人** 在转述第三方态度时，已经通过该表达本身额外带出了支持、否定、纠正、反驳或削弱等方向，此时应优先判断 **说话人** 对 hypothesis 的倾向，而不是停留在第三方自己的态度上。",
+      "second_turn_output": "<think>mock decision</think><answer>UNCERTAIN</answer>",
+      "third_turn_prompt": "",
+      "third_turn_output": "[SKIPPED: second-turn silver truth is UNCERTAIN]"
+    }
+  ]
+}

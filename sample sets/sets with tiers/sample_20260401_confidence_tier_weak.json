@@ -1,0 +1,92 @@
+[
+  {
+    "id": "sp_007",
+    "text": "连守门人都不记得他来过，恐怕他的确是没去过。",
+    "hypothesis": "他来过。",
+    "factivity": "FALSE",
+    "confidence": 0.59,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_010",
+    "text": "我感觉鸿渐喜欢唐晓芙。",
+    "hypothesis": "鸿渐喜欢唐晓芙。",
+    "factivity": "TRUE",
+    "confidence": 0.55,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_023",
+    "text": "冯太太慈眉善目，可以料想他们夫妇二人都是好人。",
+    "hypothesis": "他们夫妇二人都是好人。",
+    "factivity": "TRUE",
+    "confidence": 0.53,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_027",
+    "text": "我估计鸿渐喜欢唐晓芙。",
+    "hypothesis": "鸿渐喜欢唐晓芙。",
+    "factivity": "TRUE",
+    "confidence": 0.58,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_031",
+    "text": "那只流浪狗蜷缩在墙角，似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了。",
+    "hypothesis": "那只流浪狗再也找不到一个可以安心依靠的温暖怀抱了。",
+    "factivity": "TRUE",
+    "confidence": 0.58,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_040",
+    "text": "约翰指责汤姆剽窃。",
+    "hypothesis": "汤姆剽窃了。",
+    "factivity": "TRUE",
+    "confidence": 0.51,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_041",
+    "text": "虽然这次项目出现了严重的延误，但经理没有批评团队工作不够努力，反而肯定了大家在突发状况下的应变能力。",
+    "hypothesis": "团队工作不够努力。",
+    "factivity": "FALSE",
+    "confidence": 0.52,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_042",
+    "text": "竞争对手嘲讽我们团队提出的方案异想天开，完全是浪费公司资源的愚蠢行为。",
+    "hypothesis": "我们团队提出的方案异想天开。",
+    "factivity": "FALSE",
+    "confidence": 0.51,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_049",
+    "text": "公司高层多次公开声明此次重组是为了员工福祉。",
+    "hypothesis": "公司此次重组是为了员工福祉。",
+    "factivity": "TRUE",
+    "confidence": 0.54,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "弱"
+  },
+  {
+    "id": "sp_065",
+    "text": "由于对手在上一场比赛中展现了压倒性的实力和完美的战术配合，教练组不敢期待年轻队员能在决赛现场发挥出超常水平并赢得胜利。",
+    "hypothesis": "年轻队员能在决赛现场发挥出超常水平并赢得胜利。",
+    "factivity": "FALSE",
+    "confidence": 0.53,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "弱"
+  }
+]

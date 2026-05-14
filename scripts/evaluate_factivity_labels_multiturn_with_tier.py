@@ -12,9 +12,21 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DATASET = ROOT / "sample sets" / "sample_20260401.json"
-DEFAULT_OUTPUT_DIR = ROOT / "outputs_v8_predicate_def"
+DEFAULT_DATASET = ROOT / "sample sets" / "sample_20260401_with_tiers.json"
+DEFAULT_OUTPUT_DIR = ROOT / "outputs_v9_tiers"
 VALID_LABELS = ("TRUE", "FALSE", "UNCERTAIN")
+VALID_CONFIDENCE_TIERS = ("弱", "较弱", "较强", "强", "非叙实")
+VALID_FINAL_TIERS = (
+    "强反叙实",
+    "较强反叙实",
+    "较弱反叙实",
+    "弱反叙实",
+    "非叙实",
+    "弱正叙实",
+    "较弱正叙实",
+    "较强正叙实",
+    "强正叙实",
+)
 SUBJECT_TYPES = ("说话人", "第三方", "无", "speaker", "third_party", "none")
 
 
@@ -35,7 +47,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--api-key",
-        default="sk-AHslTmi70GHD9IvSQNTZKidE1T7JV6wNWveR9iEmfj1IryrP",
+        default="sk-An04fTe5nxf2aIhxt6ZDBzzmZci90EPBex3zKKaN0VDVeLMR",
         help="OpenAI API key. Defaults to OPENAI_API_KEY.",
     )
     parser.add_argument(
@@ -128,6 +140,99 @@ def extract_answer_label(raw_text: str) -> str:
     if bare.upper() in VALID_LABELS:
         return normalize_label(bare)
     raise ValueError(f"Could not extract label from model output: {raw_text!r}")
+
+
+def normalize_confidence_tier(value: str) -> str:
+    tier = value.strip().replace("較弱", "较弱").replace("較强", "较强")
+    tier_map = {
+        "weak": "弱",
+        "relatively_weak": "较弱",
+        "relatively_strong": "较强",
+        "strong": "强",
+    }
+    tier = tier_map.get(tier.lower(), tier)
+    if tier not in VALID_CONFIDENCE_TIERS:
+        raise ValueError(f"Invalid confidence_tier: {value!r}")
+    return tier
+
+
+def extract_confidence_tier(raw_text: str) -> str:
+    match = re.search(
+        r"<confidence_tier>\s*(弱|较弱|較弱|较强|較强|强|非叙实|weak|relatively_weak|relatively_strong|strong)\s*</confidence_tier>",
+        raw_text,
+        re.IGNORECASE,
+    )
+    if match:
+        return normalize_confidence_tier(match.group(1))
+    bare = raw_text.strip()
+    if bare in VALID_CONFIDENCE_TIERS or bare in {"較弱", "較强", "weak", "relatively_weak", "relatively_strong", "strong"}:
+        return normalize_confidence_tier(bare)
+    raise ValueError(f"Could not extract confidence_tier from model output: {raw_text!r}")
+
+
+def compose_final_tier_label(factivity: str, confidence_tier: str) -> str:
+    factivity = normalize_label(factivity)
+    confidence_tier = normalize_confidence_tier(confidence_tier)
+    if factivity == "UNCERTAIN" or confidence_tier == "非叙实":
+        return "非叙实"
+    if factivity == "TRUE":
+        label = f"{confidence_tier}正叙实"
+    else:
+        label = f"{confidence_tier}反叙实"
+    if label not in VALID_FINAL_TIERS:
+        raise ValueError(
+            f"Invalid composed final tier label from factivity={factivity!r}, "
+            f"confidence_tier={confidence_tier!r}"
+        )
+    return label
+
+
+def map_confidence_to_tier(factivity: str, confidence: float | int | str | None) -> str:
+    factivity = normalize_label(factivity)
+    if factivity == "UNCERTAIN":
+        return "非叙实"
+    if confidence is None:
+        raise ValueError("Missing confidence for non-UNCERTAIN sample.")
+    value = float(confidence)
+    if value < 0.0 or value > 1.0:
+        raise ValueError(f"confidence out of range [0,1]: {confidence!r}")
+    if value <= 0.625:
+        return "弱"
+    if value <= 0.75:
+        return "较弱"
+    if value <= 0.875:
+        return "较强"
+    return "强"
+
+
+def get_gold_confidence_tier(item: dict[str, Any]) -> str | None:
+    tier = item.get("confidence_tier")
+    if tier is not None:
+        return normalize_confidence_tier(tier)
+    confidence = item.get("confidence")
+    factivity = item.get("factivity")
+    if factivity is None or confidence is None:
+        return None
+    return map_confidence_to_tier(str(factivity), confidence)
+
+
+def get_gold_final_tier(item: dict[str, Any], gold_factivity: str, gold_confidence_tier: str | None) -> str | None:
+    final_tier = item.get("final_tier")
+    if final_tier is not None:
+        return str(final_tier)
+    factivity_tier = item.get("factivity_tier")
+    if factivity_tier == "非叙实":
+        return "非叙实"
+    if gold_confidence_tier is None:
+        return None
+    return compose_final_tier_label(gold_factivity, gold_confidence_tier)
+
+
+def log_stage_block(title: str, content: str) -> None:
+    print("-" * 80)
+    print(f"[{title}]")
+    print("-" * 80)
+    print(content)
 
 
 # def build_expert_guidance(extraction: dict[str, str], prompt_lang: str) -> dict[str, str]:
@@ -395,12 +500,20 @@ class Prediction:
     gold: str
     pred: str
     ok: bool
+    gold_confidence_tier: str | None
+    pred_confidence_tier: str
+    confidence_tier_ok: bool | None
+    gold_final_tier: str | None
+    pred_final_tier: str
+    final_tier_ok: bool | None
     first_turn_prompt: str
     first_turn_output: str
     extraction: dict[str, str]
     expert_guidance: dict[str, str]
     second_turn_prompt: str
     second_turn_output: str
+    third_turn_prompt: str
+    third_turn_output: str
 
 
 class LegacyMockMultiTurnClientV1:
@@ -511,20 +624,27 @@ class OpenAICompatibleMultiTurnClient:
             client_kwargs["base_url"] = base_url.rstrip("/")
         self.client = OpenAI(**client_kwargs)
 
-    def chat_once(self, messages: list[dict[str, str]], max_tokens: int) -> str:
+    def chat_once(
+        self,
+        messages: list[dict[str, str]],
+        max_tokens: int,
+        temperature: float = 0.3,
+        top_p: float | None = None,
+    ) -> str:
         for attempt in range(1, self.max_retries + 1):
             try:
+                request_kwargs: dict[str, Any] = {
+                    "model": self.model,
+                    "messages": messages,
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                }
+                if top_p is not None:
+                    request_kwargs["top_p"] = top_p
                 response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    temperature=0.3,
-                    max_tokens=max_tokens,
+                    **request_kwargs,
                 )
                 content = response.choices[0].message.content.strip()
-                if len(messages)==3:
-                    print('----------')
-                    print(content)
-                    print('----------')
                 if content is None:
                     raise ValueError("Model returned empty content.")
                 return content.strip()
@@ -539,10 +659,18 @@ class OpenAICompatibleMultiTurnClient:
     def predict(self, text: str, hypothesis: str, prompt_lang: str) -> dict[str, Any]:
         first_turn_prompt = build_first_turn_prompt(text, hypothesis, prompt_lang)
         first_messages = [{"role": "user", "content": first_turn_prompt}]
-        first_turn_output = self.chat_once(first_messages, max_tokens=1280)
+        log_stage_block("TURN1 Prompt", first_turn_prompt)
+        first_turn_output = self.chat_once(
+            first_messages,
+            max_tokens=1280,
+            temperature=0.0,
+            top_p=1.0,
+        )
+        log_stage_block("TURN1 Output", first_turn_output)
         extraction = parse_extraction_output(first_turn_output)
         expert_guidance = build_expert_guidance(extraction, prompt_lang)
         second_turn_prompt = build_second_turn_prompt(text, hypothesis, extraction, expert_guidance, prompt_lang)
+        log_stage_block("TURN2 Prompt", second_turn_prompt)
 
         second_messages = [
             {"role": "user", "content": first_turn_prompt},
@@ -550,7 +678,33 @@ class OpenAICompatibleMultiTurnClient:
             {"role": "user", "content": second_turn_prompt},
         ]
         second_turn_output = self.chat_once(second_messages, max_tokens=1280)
+        log_stage_block("TURN2 Output", second_turn_output)
         pred_label = extract_answer_label(second_turn_output)
+        third_turn_prompt = ""
+        third_turn_output = "[SKIPPED: second-turn silver truth is UNCERTAIN]"
+        pred_confidence_tier = "非叙实"
+        if pred_label != "UNCERTAIN":
+            third_turn_prompt = build_third_turn_prompt(
+                text=text,
+                hypothesis=hypothesis,
+                extraction=extraction,
+                silver_truth=pred_label,
+                prompt_lang=prompt_lang,
+            )
+            log_stage_block("TURN3 Prompt", third_turn_prompt)
+            third_messages = [
+                {"role": "user", "content": first_turn_prompt},
+                {"role": "assistant", "content": first_turn_output},
+                {"role": "user", "content": second_turn_prompt},
+                {"role": "assistant", "content": second_turn_output},
+                {"role": "user", "content": third_turn_prompt},
+            ]
+            third_turn_output = self.chat_once(third_messages, max_tokens=1280)
+            log_stage_block("TURN3 Output", third_turn_output)
+            pred_confidence_tier = extract_confidence_tier(third_turn_output)
+        else:
+            log_stage_block("TURN3 Prompt", "[SKIPPED: second-turn silver truth is UNCERTAIN]")
+            log_stage_block("TURN3 Output", third_turn_output)
         return {
             "first_turn_prompt": first_turn_prompt,
             "first_turn_output": first_turn_output,
@@ -558,7 +712,10 @@ class OpenAICompatibleMultiTurnClient:
             "expert_guidance": expert_guidance,
             "second_turn_prompt": second_turn_prompt,
             "second_turn_output": second_turn_output,
+            "third_turn_prompt": third_turn_prompt,
+            "third_turn_output": third_turn_output,
             "pred_label": pred_label,
+            "pred_confidence_tier": pred_confidence_tier,
         }
 
 
@@ -597,13 +754,68 @@ def build_summary(predictions: list[Prediction]) -> dict[str, Any]:
             "accuracy": (label_correct / label_total) if label_total else 0.0,
         }
 
-    return {
+    summary = {
         "total": total,
         "correct": correct,
         "accuracy": accuracy,
         "per_label": per_label,
         "confusion": {gold: dict(preds) for gold, preds in confusion.items()},
     }
+    tier_predictions = [item for item in predictions if item.gold_confidence_tier is not None]
+    if tier_predictions:
+        tier_confusion: dict[str, Counter[str]] = defaultdict(Counter)
+        for item in tier_predictions:
+            tier_confusion[item.gold_confidence_tier][item.pred_confidence_tier] += 1
+
+        tier_total = len(tier_predictions)
+        tier_correct = sum(1 for item in tier_predictions if item.confidence_tier_ok)
+        per_tier: dict[str, dict[str, Any]] = {}
+        for tier in VALID_CONFIDENCE_TIERS:
+            tier_items = [item for item in tier_predictions if item.gold_confidence_tier == tier]
+            if not tier_items:
+                continue
+            tier_correct_count = sum(1 for item in tier_items if item.confidence_tier_ok)
+            per_tier[tier] = {
+                "total": len(tier_items),
+                "correct": tier_correct_count,
+                "accuracy": tier_correct_count / len(tier_items),
+            }
+
+        summary["confidence_tier_summary"] = {
+            "total": tier_total,
+            "correct": tier_correct,
+            "accuracy": (tier_correct / tier_total) if tier_total else 0.0,
+            "per_tier": per_tier,
+            "confusion": {gold: dict(preds) for gold, preds in tier_confusion.items()},
+        }
+    final_predictions = [item for item in predictions if item.gold_final_tier is not None]
+    if final_predictions:
+        final_confusion: dict[str, Counter[str]] = defaultdict(Counter)
+        for item in final_predictions:
+            final_confusion[item.gold_final_tier][item.pred_final_tier] += 1
+
+        final_total = len(final_predictions)
+        final_correct = sum(1 for item in final_predictions if item.final_tier_ok)
+        per_final_tier: dict[str, dict[str, Any]] = {}
+        for tier in VALID_FINAL_TIERS:
+            tier_items = [item for item in final_predictions if item.gold_final_tier == tier]
+            if not tier_items:
+                continue
+            tier_correct_count = sum(1 for item in tier_items if item.final_tier_ok)
+            per_final_tier[tier] = {
+                "total": len(tier_items),
+                "correct": tier_correct_count,
+                "accuracy": tier_correct_count / len(tier_items),
+            }
+
+        summary["final_tier_summary"] = {
+            "total": final_total,
+            "correct": final_correct,
+            "accuracy": (final_correct / final_total) if final_total else 0.0,
+            "per_tier": per_final_tier,
+            "confusion": {gold: dict(preds) for gold, preds in final_confusion.items()},
+        }
+    return summary
 
 
 def prediction_to_dict(item: Prediction) -> dict[str, Any]:
@@ -614,16 +826,45 @@ def prediction_to_dict(item: Prediction) -> dict[str, Any]:
         "gold": item.gold,
         "pred": item.pred,
         "ok": item.ok,
+        "gold_factivity": item.gold,
+        "pred_factivity": item.pred,
+        "factivity_ok": item.ok,
+        "gold_confidence_tier": item.gold_confidence_tier,
+        "pred_confidence_tier": item.pred_confidence_tier,
+        "confidence_tier_ok": item.confidence_tier_ok,
+        "gold_final_tier": item.gold_final_tier,
+        "pred_final_tier": item.pred_final_tier,
+        "final_tier_ok": item.final_tier_ok,
         "first_turn_prompt": item.first_turn_prompt,
         "extraction": item.extraction,
         "expert_guidance": item.expert_guidance,
         "first_turn_output": item.first_turn_output,
         "second_turn_prompt": item.second_turn_prompt,
         "second_turn_output": item.second_turn_output,
+        "third_turn_prompt": item.third_turn_prompt,
+        "third_turn_output": item.third_turn_output,
     }
 
 
 def prediction_from_dict(item: dict[str, Any]) -> Prediction:
+    gold_confidence_tier = item.get("gold_confidence_tier")
+    if gold_confidence_tier is not None:
+        gold_confidence_tier = normalize_confidence_tier(gold_confidence_tier)
+    pred_confidence_tier = normalize_confidence_tier(item.get("pred_confidence_tier", "非叙实"))
+    confidence_tier_ok = item.get("confidence_tier_ok")
+    if confidence_tier_ok is not None:
+        confidence_tier_ok = bool(confidence_tier_ok)
+    gold_final_tier = item.get("gold_final_tier")
+    if gold_final_tier is None and gold_confidence_tier is not None:
+        gold_final_tier = compose_final_tier_label(item["gold"], gold_confidence_tier)
+    pred_final_tier = item.get("pred_final_tier")
+    if pred_final_tier is None:
+        pred_final_tier = compose_final_tier_label(item["pred"], pred_confidence_tier)
+    final_tier_ok = item.get("final_tier_ok")
+    if final_tier_ok is None and gold_final_tier is not None:
+        final_tier_ok = normalize_label(item["pred"]) == normalize_label(item["gold"]) and pred_final_tier == gold_final_tier
+    if final_tier_ok is not None:
+        final_tier_ok = bool(final_tier_ok)
     return Prediction(
         sample_id=item["id"],
         text=item["text"],
@@ -631,12 +872,20 @@ def prediction_from_dict(item: dict[str, Any]) -> Prediction:
         gold=normalize_label(item["gold"]),
         pred=normalize_label(item["pred"]),
         ok=bool(item["ok"]),
+        gold_confidence_tier=gold_confidence_tier,
+        pred_confidence_tier=pred_confidence_tier,
+        confidence_tier_ok=confidence_tier_ok,
+        gold_final_tier=gold_final_tier,
+        pred_final_tier=pred_final_tier,
+        final_tier_ok=final_tier_ok,
         first_turn_prompt=item["first_turn_prompt"],
         first_turn_output=item["first_turn_output"],
         extraction=item["extraction"],
         expert_guidance=item["expert_guidance"],
         second_turn_prompt=item["second_turn_prompt"],
         second_turn_output=item["second_turn_output"],
+        third_turn_prompt=item.get("third_turn_prompt", ""),
+        third_turn_output=item.get("third_turn_output", ""),
     )
 
 
@@ -646,7 +895,7 @@ def list_main_result_files(output_dir: Path) -> list[Path]:
     return sorted(
         path
         for path in output_dir.glob("*.json")
-        if "_errors_" not in path.name and path.name.startswith("factivity_label_multiturn_eval_")
+        if "_errors_" not in path.name and path.name.startswith("factivity_label_multiturn_with_tier_eval_")
     )
 
 
@@ -663,7 +912,7 @@ def resolve_result_paths(output_dir: Path, provider: str, model: str) -> tuple[P
         result_path = existing[0]
     else:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        result_path = output_dir / f"factivity_label_multiturn_eval_{provider}_{model}_{timestamp}.json"
+        result_path = output_dir / f"factivity_label_multiturn_with_tier_eval_{provider}_{model}_{timestamp}.json"
     errors_path = Path(str(result_path).replace("_eval_", "_errors_"))
     return result_path, errors_path
 
@@ -775,8 +1024,23 @@ def load_resume_predictions(
             raise SystemExit(
                 f"Text or hypothesis mismatch for {prediction.sample_id} in existing result file: {result_path}"
             )
+        derived_gold_confidence_tier = get_gold_confidence_tier(expected)
+        if prediction.gold_confidence_tier is None and derived_gold_confidence_tier is not None:
+            prediction.gold_confidence_tier = derived_gold_confidence_tier
+        if prediction.gold_final_tier is None:
+            prediction.gold_final_tier = get_gold_final_tier(expected, prediction.gold, prediction.gold_confidence_tier)
+        if prediction.pred_final_tier == "非叙实" and prediction.pred != "UNCERTAIN":
+            prediction.pred_final_tier = compose_final_tier_label(prediction.pred, prediction.pred_confidence_tier)
+        if prediction.confidence_tier_ok is None and prediction.gold_confidence_tier is not None:
+            prediction.confidence_tier_ok = prediction.pred_confidence_tier == prediction.gold_confidence_tier
+        if prediction.final_tier_ok is None and prediction.gold_final_tier is not None:
+            prediction.final_tier_ok = prediction.ok and prediction.pred_final_tier == prediction.gold_final_tier
 
     return predictions
+
+
+def is_complete_result(predictions: list[Prediction], data: list[dict[str, Any]]) -> bool:
+    return len(predictions) == len(data)
 
 
 def evaluate(
@@ -799,6 +1063,16 @@ def evaluate(
         pred_label = normalize_label(result["pred_label"])
         gold_label = normalize_label(item["factivity"])
         ok = pred_label == gold_label
+        gold_confidence_tier = get_gold_confidence_tier(item)
+        pred_confidence_tier = normalize_confidence_tier(result["pred_confidence_tier"])
+        confidence_tier_ok = None
+        if gold_confidence_tier is not None:
+            confidence_tier_ok = pred_confidence_tier == gold_confidence_tier
+        gold_final_tier = get_gold_final_tier(item, gold_label, gold_confidence_tier)
+        pred_final_tier = compose_final_tier_label(pred_label, pred_confidence_tier)
+        final_tier_ok = None
+        if gold_final_tier is not None:
+            final_tier_ok = ok and pred_final_tier == gold_final_tier
 
         predictions.append(
             Prediction(
@@ -808,12 +1082,20 @@ def evaluate(
                 gold=gold_label,
                 pred=pred_label,
                 ok=ok,
+                gold_confidence_tier=gold_confidence_tier,
+                pred_confidence_tier=pred_confidence_tier,
+                confidence_tier_ok=confidence_tier_ok,
+                gold_final_tier=gold_final_tier,
+                pred_final_tier=pred_final_tier,
+                final_tier_ok=final_tier_ok,
                 first_turn_prompt=result["first_turn_prompt"],
                 first_turn_output=result["first_turn_output"],
                 extraction=result["extraction"],
                 expert_guidance=result["expert_guidance"],
                 second_turn_prompt=result["second_turn_prompt"],
                 second_turn_output=result["second_turn_output"],
+                third_turn_prompt=result["third_turn_prompt"],
+                third_turn_output=result["third_turn_output"],
             )
         )
         summary = save_main_results(
@@ -826,10 +1108,20 @@ def evaluate(
         )
 
         if verbose:
-            print(
-                f"[{index:03d}] {item['id']} gold={gold_label} pred={pred_label} ok={ok}",
-                flush=True,
+            message = (
+                f"[{index:03d}] {item['id']} "
+                f"gold_factivity={gold_label} pred_factivity={pred_label} factivity_ok={ok}"
             )
+            if gold_confidence_tier is not None:
+                message += (
+                    f" gold_confidence_tier={gold_confidence_tier}"
+                    f" pred_confidence_tier={pred_confidence_tier}"
+                    f" confidence_tier_ok={confidence_tier_ok}"
+                    f" gold_final_tier={gold_final_tier}"
+                    f" pred_final_tier={pred_final_tier}"
+                    f" final_tier_ok={final_tier_ok}"
+                )
+            print(message, flush=True)
 
         if sleep_seconds > 0:
             time.sleep(sleep_seconds)
@@ -838,11 +1130,24 @@ def evaluate(
 
 
 def print_summary(summary: dict[str, Any], result_path: Path, errors_path: Path) -> None:
-    print(f"accuracy: {summary['accuracy']:.4f} ({summary['correct']}/{summary['total']})")
+    final_tier_summary = summary.get("final_tier_summary")
+    if final_tier_summary:
+        print(
+            "final_tier_accuracy: "
+            f"{final_tier_summary['accuracy']:.4f} "
+            f"({final_tier_summary['correct']}/{final_tier_summary['total']})"
+        )
+        for tier, stats in final_tier_summary["per_tier"].items():
+            print(f"{tier}: {stats['accuracy']:.4f} ({stats['correct']}/{stats['total']})")
+        print("final_tier_confusion:")
+        for gold, row in final_tier_summary["confusion"].items():
+            print(f"  gold={gold}: {row}")
+
+    print(f"factivity_accuracy: {summary['accuracy']:.4f} ({summary['correct']}/{summary['total']})")
     for label in VALID_LABELS:
         stats = summary["per_label"][label]
         print(f"{label}: {stats['accuracy']:.4f} ({stats['correct']}/{stats['total']})")
-    print("confusion:")
+    print("factivity_confusion:")
     for gold in VALID_LABELS:
         row = summary["confusion"].get(gold, {})
         print(f"  gold={gold}: {row}")
@@ -1065,6 +1370,7 @@ def parse_extraction_output(raw_text: str) -> dict[str, str]:
 class MockMultiTurnClient:
     def predict(self, text: str, hypothesis: str, prompt_lang: str) -> dict[str, Any]:
         first_turn_prompt = build_first_turn_prompt(text, hypothesis, prompt_lang)
+        log_stage_block("TURN1 Prompt", first_turn_prompt)
         subject_type = "third_party"
         proposition_subject = "none"
         attitude_predicate = "none"
@@ -1144,9 +1450,11 @@ class MockMultiTurnClient:
             f"<attitude_hint>{attitude_hint}</attitude_hint>"
             f"<basis>{basis}</basis>"
         )
+        log_stage_block("TURN1 Output", first_turn_output)
         extraction = parse_extraction_output(first_turn_output)
         expert_guidance = build_expert_guidance(extraction, prompt_lang)
         second_turn_prompt = build_second_turn_prompt(text, hypothesis, extraction, expert_guidance, prompt_lang)
+        log_stage_block("TURN2 Prompt", second_turn_prompt)
 
         label = "TRUE"
         if extraction["basis"] in {"none", "无"} and extraction["predicate_type"] == "非叙实":
@@ -1157,6 +1465,35 @@ class MockMultiTurnClient:
             label = "TRUE"
 
         second_turn_output = f"<think>mock decision</think><answer>{label}</answer>"
+        log_stage_block("TURN2 Output", second_turn_output)
+        third_turn_prompt = ""
+        third_turn_output = "[SKIPPED: second-turn silver truth is UNCERTAIN]"
+        pred_confidence_tier = "非叙实"
+        if label != "UNCERTAIN":
+            third_turn_prompt = build_third_turn_prompt(
+                text=text,
+                hypothesis=hypothesis,
+                extraction=extraction,
+                silver_truth=label,
+                prompt_lang=prompt_lang,
+            )
+            log_stage_block("TURN3 Prompt", third_turn_prompt)
+            if extraction["basis"] not in {"none", "无"}:
+                pred_confidence_tier = "较强"
+            elif extraction["predicate_type"] == "正叙实":
+                pred_confidence_tier = "强"
+            elif extraction["predicate_type"] == "反叙实":
+                pred_confidence_tier = "较强"
+            else:
+                pred_confidence_tier = "弱"
+            third_turn_output = (
+                "<think>mock tier decision</think>"
+                f"<confidence_tier>{pred_confidence_tier}</confidence_tier>"
+            )
+            log_stage_block("TURN3 Output", third_turn_output)
+        else:
+            log_stage_block("TURN3 Prompt", "[SKIPPED: second-turn silver truth is UNCERTAIN]")
+            log_stage_block("TURN3 Output", third_turn_output)
         return {
             "first_turn_prompt": first_turn_prompt,
             "first_turn_output": first_turn_output,
@@ -1164,7 +1501,10 @@ class MockMultiTurnClient:
             "expert_guidance": expert_guidance,
             "second_turn_prompt": second_turn_prompt,
             "second_turn_output": second_turn_output,
+            "third_turn_prompt": third_turn_prompt,
+            "third_turn_output": third_turn_output,
             "pred_label": extract_answer_label(second_turn_output),
+            "pred_confidence_tier": pred_confidence_tier,
         }
 
 
@@ -1373,6 +1713,108 @@ basis: {extraction["basis"]}
 {expert_guidance["expert_advice"]}"""
 
 
+def build_third_turn_prompt(
+    text: str,
+    hypothesis: str,
+    extraction: dict[str, str],
+    silver_truth: str,
+    prompt_lang: str,
+) -> str:
+    if prompt_lang == "en":
+        return f"""Task: Based on the given silver truth, judge only the confidence tier for the current sample.
+
+Notes:
+1. The second turn has already produced the silver truth, and it is fixed for this sample.
+2. You must not re-judge whether the hypothesis is TRUE, FALSE, or UNCERTAIN.
+3. Your only task now is to determine which confidence tier best matches the **speaker**'s strength of stance toward the hypothesis under this fixed result.
+4. Here, confidence tier means the **speaker**'s degree of tendency toward the hypothesis, not the model's confidence in its own answer.
+5. You must choose exactly one of these four confidence tiers:
+- weak
+- relatively_weak
+- relatively_strong
+- strong
+
+Current silver truth: {silver_truth}
+
+Judge using:
+- the original text
+- the hypothesis
+- the first-turn extracted fields
+- the second-turn silver truth
+
+Emphasis again:
+- do not re-judge factivity
+- do not output TRUE, FALSE, or UNCERTAIN
+- confidence tier here means the graded strength of the **speaker**'s tendency toward the hypothesis under the fixed silver truth, not the model's self-confidence
+- output only one confidence tier: weak / relatively_weak / relatively_strong / strong
+
+Output format:
+You must strictly follow this format and output nothing else:
+<think>brief analysis</think>
+<confidence_tier>weak/relatively_weak/relatively_strong/strong</confidence_tier>
+
+Original text: {text}
+Hypothesis: {hypothesis}
+
+First-turn extracted fields:
+subject_type: {extraction["subject_type"]}
+proposition_subject: {extraction["proposition_subject"]}
+attitude_predicate: {extraction["attitude_predicate"]}
+predicate_type: {extraction["predicate_type"]}
+attitude_hint: {extraction["attitude_hint"]}
+basis: {extraction["basis"]}
+
+Second-turn result:
+silver_truth: {silver_truth}"""
+
+    return f"""任务：在已经给定 silver truth 的基础上，只判断当前样本的 confidence tier。
+
+注意：
+1. 第二轮已经给出了 silver truth，它是当前样本的既定判断结果。
+2. 你现在不能重新判断 hypothesis 是 TRUE、FALSE 或 UNCERTAIN。
+3. 你现在唯一的任务，是判断：在这个既定判断结果下，**说话人** 对 hypothesis 的倾向强度属于哪一个 confidence tier。
+4. 这里的 confidence tier 表示 **说话人** 对 hypothesis 的倾向强弱，而不是模型对自己答案的自信度。
+5. 你只能从以下四个 confidence tier 中选择一个：
+- 弱
+- 较弱
+- 较强
+- 强
+
+当前 silver truth：{silver_truth}
+
+请根据以下材料进行判断：
+- 原始 text
+- hypothesis
+- 第一轮抽取结果
+- 第二轮的 silver truth
+
+再次强调：
+- 不要重新判断 factivity
+- 不要输出 TRUE、FALSE、UNCERTAIN
+- 不要输出“正叙实”“反叙实”“非叙实”
+- 只输出一个 confidence tier：弱 / 较弱 / 较强 / 强
+- 这里的 confidence tier 指的是 **说话人** 对 hypothesis 的倾向强弱等级，是在既定 silver truth 下对 **说话人** 立场强度的进一步分档，不是模型对自己答案的自信度
+
+输出格式：
+请严格按照以下格式输出，不要输出其他内容：
+<think>简短分析</think>
+<confidence_tier>弱/较弱/较强/强</confidence_tier>
+
+原始 text: {text}
+hypothesis: {hypothesis}
+
+第一轮抽取结果：
+subject_type: {extraction["subject_type"]}
+proposition_subject: {extraction["proposition_subject"]}
+attitude_predicate: {extraction["attitude_predicate"]}
+predicate_type: {extraction["predicate_type"]}
+attitude_hint: {extraction["attitude_hint"]}
+basis: {extraction["basis"]}
+
+第二轮结果：
+silver_truth: {silver_truth}"""
+
+
 def _is_third_party_subject(value: str) -> bool:
     stripped = value.strip()
     normalized = stripped.lower()
@@ -1522,6 +1964,30 @@ def main() -> None:
             f"Resuming from {result_path} with {len(initial_predictions)}/{len(data)} completed samples.",
             flush=True,
         )
+    if is_complete_result(initial_predictions, data):
+        print(
+            "Existing result file is already complete. Recomputing accuracy and summaries without rerunning inference.",
+            flush=True,
+        )
+        summary = save_main_results(
+            result_path=result_path,
+            dataset_path=args.dataset,
+            provider=args.provider,
+            model=model_name,
+            prompt_lang=args.prompt_lang,
+            predictions=initial_predictions,
+        )
+        save_error_results(
+            errors_path=errors_path,
+            dataset_path=args.dataset,
+            provider=args.provider,
+            model=model_name,
+            prompt_lang=args.prompt_lang,
+            predictions=initial_predictions,
+            summary=summary,
+        )
+        print_summary(summary, result_path, errors_path)
+        return
 
     client = make_client(args)
     predictions, summary = evaluate(
