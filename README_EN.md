@@ -15,6 +15,8 @@ Shared Task 1 of the 25th China National Conference on Computational Linguistics
 
 # Recent Updates
 
+![Static Badge](https://img.shields.io/badge/20260515-UPDATE-brightgreen?style=plastic) Updated the `#1 Evaluation Schedule`: In June 1-7, official evaluation set released (available for download within 7 days of release); participating teams conduct evaluation.
+
 ![Static Badge](https://img.shields.io/badge/20260513-UPDATE-brightgreen?style=plastic) Updated the `#4 Task Overview`.
 
 ![Static Badge](https://img.shields.io/badge/20260502-UPDATE-brightgreen?style=plastic) Updated the `#5 Evaluation Data`. Added [Sample Set 20260502](sample%20sets/sample_20260502.json).
@@ -39,8 +41,8 @@ Shared Task 1 of the 25th China National Conference on Computational Linguistics
 
 - March–April 2026: [Task announcement](http://cips-cl.org/static/CCL2026/cclEval/taskEvaluation/index.html) (completed) & team registration (ongoing);
 - By April 1, 2026: Release of the [first batch of sample data](sample%20sets/sample_20260401.json) (completed);
-- By May 1, 2026: Release of the Second batch of sample data;
-- May 2026: Official evaluation set released (available for download within 7 days of release); participating teams conduct evaluation within 7 days;
+- By May 2, 2026: Release of the [second batch of sample data](sample%20sets/sample_20260502.json) (completed);
+- June 1-7 2026: Official evaluation set released (available for download within 7 days of release); participating teams conduct evaluation;
 - June 2026: Participating teams submit technical reports for review;
 - July 2026: Technical report review; acceptance notifications sent;
 - August 2026: Camera-ready versions of evaluation papers submitted;
