@@ -55,8 +55,8 @@ If the submission file is not encoded in UTF-8, the system will return the follo
 提交文件中的数据条数必须 **严格等于正式评测集中的数据条数**。
 The number of data in the submission file must be **strictly equal to the number of data in the evaluation set. **.
 
-若数据条数多于或少于 5000（待定）条，系统将返回错误：
-If the count is greater than or less than 5,000 (TBD), the system will return the following error:
+否则，系统将返回错误：
+If not, the system will return the following error:
 
     object quantity error: 5000 objects are expected.
 
