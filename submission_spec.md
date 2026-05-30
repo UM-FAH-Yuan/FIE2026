@@ -24,9 +24,16 @@ The submission file must be a **JSON Array** containing **5,000 (TBD) prediction
 
 ``` json
 [
-  {"id": 1, "factivity": "TRUE", "confidence": 0.87},
-  {"id": 2, "factivity": "FALSE", "confidence": 0.73},
-  {"id": 3, "factivity": "UNCERTAIN", "confidence": 0.50}
+  {"track": "pr", "id": 1, "factivity": "TRUE", "confidence": 0.87},
+  {"track": "pr", "id": 2, "factivity": "FALSE", "confidence": 0.73},
+  {"track": "pr", "id": 3, "factivity": "UNCERTAIN", "confidence": 0.50}
+]
+```
+``` json
+[
+  {"track": "ft", "id": 1, "factivity": "TRUE", "confidence": 0.87},
+  {"track": "ft", "id": 2, "factivity": "FALSE", "confidence": 0.73},
+  {"track": "ft", "id": 3, "factivity": "UNCERTAIN", "confidence": 0.50}
 ]
 ```
 
