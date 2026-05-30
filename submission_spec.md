@@ -71,37 +71,47 @@ If not, the system will return the following error:
 
 # 4. 数据字段要求 Data Field Requirements
 
-提交文件中的每条数据 **必须且只能包含以下三个字段**：
-Each data instance in the submission file **must contain exactly the following three fields**:
+提交文件中的每条数据 **必须且只能包含以下四个字段**：
+Each data instance in the submission file **must contain exactly the following 4 fields**:
 
   |字段名 Field Name      |数据类型 Data Type           |说明Description
   |------------ |-------------- |------------
+  |track       |string         |赛道名称 Name of track
   |id           |integer        |数据编号 Data identifier 
   |factivity    |string         |事实性判断 Factivity judgment 
   |confidence   |float          |模型置信度 Model confidence score 
 
 ## 4.1 字段数量检查 Field Count Check
 
-若某条数据字段数量不为 3，系统将返回错误：
-If a data instance does not contain exactly 3 fields, the system will return the following error:
+若某条数据字段数量不为 4，系统将返回错误：
+If a data instance does not contain exactly 4 fields, the system will return the following error:
 
-    field quantity error in line XXX: 3 fields are expected.
+    field quantity error : 4 fields are expected.
 
 其中 `XXX` 为 output 文件中的行号。
 where `XXX` is the line number in the output file.
 
 ## 4.2 字段名称检查 Field Name Check
 
-若字段名称不符合要求（必须为`id`、`factivity`、`confidence`），系统将返回错误：
-If the field names do not meet the requirements (must be `id`, `factivity`, and `confidence`), the system will return the following error:
+若字段名称不符合要求（必须为`track`、`id`、`factivity`、`confidence`），系统将返回错误：
+If the field names do not meet the requirements (must be `track`, `id`, `factivity`, and `confidence`), the system will return the following error:
 
-    field name error in line XXX: "id", "factivity", "confidence" are expected.
+    field name error : "track", "id", "factivity", "confidence" are expected.
 
 ------------------------------------------------------------------------
 
 # 5. 字段取值规则 Field Value Rules
 
-## 5.1 id 
+## 5.1 track
+
+`track`字段取值只能为`"pr"`或`"ft"`。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
+
+队伍在提交文件是必须检查所提交的文件与赛道是否匹配。如不匹配，则会返回。。。。。。。。。。。。。。。。。。。
+
+field value error : "track" must be "pr".（提示词赛道）
+field value error: "track" must be "ft".（微调赛道）
+
+## 5.2 id 
 
 `id` 字段必须满足以下要求：
 The `id` field must meet the following requirements:
@@ -118,9 +128,9 @@ The `id` field must meet the following requirements:
 若不满足上述条件，系统将返回错误：
 If any of the above conditions are not met, the system will return the following error:
 
-    field value error in line XXX: "id" must be an integer in [1, 5000] and sorted in ascending order.
+    field value error : "id" must be an integer in [1, 5000] and sorted in ascending order.
 
-## 5.2 factivity 
+## 5.3 factivity 
 
 `factivity` 字段的合法取值为：
 The valid values for the `factivity` field are:
@@ -132,9 +142,9 @@ The valid values for the `factivity` field are:
 若出现其他取值，系统将返回错误：
 If any other value appears, the system will return the following error:
 
-    field value error in line XXX: "factivity" must be one of {"TRUE", "FALSE", "UNCERTAIN"}.
+    field value error : "factivity" must be one of {"TRUE", "FALSE", "UNCERTAIN"}.
 
-## 5.3 confidence 
+## 5.4 confidence 
 
 ### 情况一 Case 1："factivity" = "TRUE" or "FALSE"
 
@@ -158,7 +168,7 @@ When `factivity` is `TRUE` or `FALSE`, the `confidence` field must satisfy:
 若不满足要求，系统将返回错误：
 If the requirements are not met, the system will return the following error:
 
-    field value error in line XXX: "confidence" must be a number in (0.50, 1.00] with two decimal places.
+    field value error : "confidence" must be a number in (0.50, 1.00] with two decimal places.
 
 ### 情况二 Case 2："factivity" = "UNCERTAIN"
 
@@ -172,7 +182,7 @@ When `factivity` is `UNCERTAIN`, the `confidence` field must satisfy:
 若不满足要求，系统将返回错误：
 If the requirement is not met, the system will return the following error:
 
-    field value error in line XXX: "confidence" must be null when "factivity" is "uncertain".
+    field value error : "confidence" must be null when "factivity" is "uncertain".
 
 ------------------------------------------------------------------------
 
@@ -182,10 +192,10 @@ If the requirement is not met, the system will return the following error:
 
 ``` json
 [
-  {"id": 1, "factivity": "TRUE", "confidence": 0.87},
-  {"id": 2, "factivity": "FALSE", "confidence": 0.73},
-  {"id": 3, "factivity": "UNCERTAIN", "confidence": 0.50},
-  {"id": 4, "factivity": "TRUE", "confidence": 0.91}
+  {"track": "pr", "id": 1, "factivity": "TRUE", "confidence": 0.87},
+  {"track": "pr", "id": 2, "factivity": "FALSE", "confidence": 0.73},
+  {"track": "pr", "id": 3, "factivity": "UNCERTAIN", "confidence": 0.50},
+  {"track": "pr", "id": 4, "factivity": "TRUE", "confidence": 0.91}
 ]
 ```
 
@@ -196,7 +206,7 @@ If the requirement is not met, the system will return the following error:
  | 错误类型 Error Type                     |示例 Examples|
   |-------------------------------- |----------------------|
   |数据条数错误 Incorrect data count|4999 条或 5001 条 4,999 or 5,001 instances |
-  |字段数量错误 Incorrect field count|少于或多于 3 个字段 Fewer or more than 3 fields|
+  |字段数量错误 Incorrect field count|少于或多于 4 个字段 Fewer or more than 4 fields|
   |字段名称错误 Incorrect field name |`fact`, `score`|
   |id 未升序 id not in ascending order| `1,3,2`|
   |id 重复 Duplicate id   | 两条记录 `"id" = 15` Two records with `"id" = 15`|
@@ -212,7 +222,7 @@ If the requirement is not met, the system will return the following error:
 所有错误信息遵循统一格式：
 All error messages follow a unified format:
 
-    <error type> [in line XXX]: <expected condition>
+`<error type> : <expected condition>`
 
 示例Example：
 
@@ -221,7 +231,7 @@ All error messages follow a unified format:
   |`file format error`      |文件不是合法 JSON The file is not a valid JSON file 
   |`file encoding error`    |文件编码不是 UTF-8 The file encoding is not UTF-8 
  | `object quantity error`  |数据条数不为 5000 The number of data instances is not 5,000 
-|  `field quantity error`   |字段数量不为 3 The number of fields is not 3
+|  `field quantity error`   |字段数量不为 4 The number of fields is not 4
 |  `field name error`       |字段名称不正确 The field names are incorrect
 |  `field value error`      |字段取值不符合要求 The field values do not meet the requirements
 
