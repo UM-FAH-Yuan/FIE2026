@@ -15,6 +15,8 @@ Shared Task 1 of the 25th China National Conference on Computational Linguistics
 
 # Recent Updates
 
+![Static Badge](https://img.shields.io/badge/20260531-UPDATE-brightgreen?style=plastic)  Important Update! The factivity judgment for ID sp_549 in [Sample Set 20260502](sample%20sets/sample_20260502.json) has been corrected from FALSE to TRUE. Please use the new version. The content of FAQ #10 in `#10 Frequently Asked Questions`, has also been updated.
+
 ![Static Badge](https://img.shields.io/badge/20260515-UPDATE-brightgreen?style=plastic) Updated the `#1 Evaluation Schedule`: In June 1-7, official evaluation set released (available for download within 7 days of release); participating teams conduct evaluation.
 
 ![Static Badge](https://img.shields.io/badge/20260513-UPDATE-brightgreen?style=plastic) Updated the `#4 Task Overview`.
@@ -146,17 +148,19 @@ Since the evaluation targets large language models, no training or validation se
 
 ## 5.2 Data Fields
 
-(1) **id**: Data identifier. IDs follow the format "track code_data number." The track code `pr` indicates data for the Prompt Track; `ft` indicates data for the Fine-Tuning Track. Data IDs in the sample set follow the `sp_XXX` encoding format.
+(1) **track**: track code. The track code `pr` indicates that the data is used for the prompt track evaluation, while the track code `ft` indicates that the data is used for the fine-tuning track evaluation.
 
-(2) **text**: The background sentence (entailing sentence). This field provides the context needed for factivity inference; the model must use this as the basis for judging the truth value of the hypothesis.
+(2) **id**: Data identifier. The ID follows a numbering strategy that corresponds one-to-one with IDs in the test set, sorted in ascending order (e.g., 1, 2, 3, 4, ..., 5000). Data IDs in the sample set follow the `sp_XXX` encoding format.
 
-(3) **hypothesis**: The hypothesis sentence (entailed sentence). This field provides the proposition to be evaluated; the model must judge its truth value based on the content of the background sentence.
+(3) **text**: The background sentence (entailing sentence). This field provides the context needed for factivity inference; the model must use this as the basis for judging the truth value of the hypothesis.
 
-(4) **factivity**: The factivity judgment. The model's judgment of the truth value of the hypothesis is written into this field. Valid values are `"TRUE"`, `"FALSE"`, and `"UNCERTAIN"`.
+(4) **hypothesis**: The hypothesis sentence (entailed sentence). This field provides the proposition to be evaluated; the model must judge its truth value based on the content of the background sentence.
 
-(5) **confidence**: The confidence level of the factivity judgment, i.e., the degree to which the hypothesis is considered true or false given the `text` field. When `factivity` is `"TRUE"` or `"FALSE"`, the valid range of `confidence` is `(0.50, 1.00]` (left-open, right-closed). When `factivity` is `"UNCERTAIN"`, `confidence` must be fixed at `0.50`.
+(5) **factivity**: The factivity judgment. The model's judgment of the truth value of the hypothesis is written into this field. Valid values are `"TRUE"`, `"FALSE"`, and `"UNCERTAIN"`.
 
-Sample-set entries contain all five fields above; evaluation-set entries contain only `id`, `text`, and `hypothesis`.
+(6) **confidence**: The confidence level of the factivity judgment, i.e., the degree to which the hypothesis is considered true or false given the `text` field. When `factivity` is `"TRUE"` or `"FALSE"`, the valid range of `confidence` is `(0.50, 1.00]` (left-open, right-closed). When `factivity` is `"UNCERTAIN"`, `confidence` must be fixed at `0.50`.
+
+Sample-set include the fields `id`, `text`, `hypothesis`, `factivity`, and `confidence`; evaluation-set entries contain only `track`, `id`, `text`, and `hypothesis`.
 
 ## 5.3 Data Examples
 
@@ -201,7 +205,7 @@ The model must judge the truth value of the entailed sentence *a* based on the c
 - Truth values include three categories:
   - If the model determines, based on the background sentence, that the hypothesis is **true**, write `"TRUE"` in the `factivity` field, and write the model's confidence score in the `confidence` field (i.e., the degree to which the model believes the hypothesis is true). The confidence value range is `(0.5, 1]`, and the field value is a **number** (numeric value rounded to two decimal places).
   - If the model determines, based on the background sentence, that the hypothesis is **false**, write `"FALSE"` in the `factivity` field, and write the model's confidence score in the `confidence` field (i.e., the degree to which the model believes the hypothesis is false). The confidence value range is `(0.5, 1]`, and the field value is a **number** (numeric value rounded to two decimal places).
-  - If the model determines that the truth value of the hypothesis **cannot be determined** based on the background sentence, write `"UNCERTAIN"` in the `factivity` field, and write `0.50` in the `confidence` field. The field value type here is **number**.
+  - If the model determines that the truth value of the hypothesis **cannot be determined** based on the background sentence, write `"UNCERTAIN"` in the `factivity` field, and write `0.50` in the `confidence` field. The field value type here is **number** (numeric value rounded to two decimal places).
 - If the model refuses to answer, please adjust the prompt and retest.
 - If other issues arise, please contact the task organizers by email.
 - All resources used by participating teams must be described in detail in the final technical report. All experimental code and results should be carefully saved for verification purposes.
@@ -260,8 +264,9 @@ Based on the combination of these two parameters, the evaluation system maps eac
 To evaluate LLMs' factivity inference ability more accurately, this evaluation adopts **gradient matching** for scoring: the closer the interval predicted by the model is to the gold interval, the higher the score. The specific rules are as follows:
 
 - If the model answer and the gold answer fall in the **same interval**, the score is **1**;
-- If the interval of the model answer is **adjacent** to that of the gold answer, the score is **σ** (σ ≈ 0.6827);
-- If the interval of the model answer is **not adjacent** to that of the gold answer, the score is **0**.
+- If the interval of the model answer is **adjacent** to that of the gold answer, the score is **2σ** (2σ ≈ 0.9545);
+- If the interval of the model answer is **separated by exactly one interval** from that of the gold answer, the score is **σ** (σ ≈ 0.6827);
+- Otherwise, the score is **0**.
 
 The complete scoring relationship among intervals is shown in the matrix below (rows correspond to model answers submitted by participating teams; columns correspond to gold answers annotated by experts):
 
@@ -341,7 +346,7 @@ Award structure for each track:
 
 - **Q10**: Is the use of external data allowed? That is, can we use data other than the officially provided data for training? For example, can we create our own data, or use other open-source data? Is pseudo-labeling allowed, i.e., can we use our model to infer on the test set and add the results as augmented data to the training set?
 
-  **A10**: In the fine-tuning track, data augmentation methods are allowed for training the model (self-annotated data, collecting open-source data, pseudo-labeling, and other methods are all permitted). However, when submitting the code files, you must also provide the augmented datasets with annotations that were used during training.
+  **A10**: API calls are permitted in this evaluation, but the introduction of external data sources is prohibited. The use of training sets to generate pseudo-labels via model predictions and to incorporate them into the training process is allowed. However, it is strictly forbidden to use any information from the test set (evaluation data) to generate pseudo-labels or optimize models. Even if one claims to be "only pseudo-labeling," using test set samples or prediction results constitutes a violation. In summary, the test set must not be used for optimization.
 
 - **Q11**: Are there any restrictions on the number of parameters? For example, most competitions restrict models to under 10B parameters. Also, if multiple models are used, is there a restriction on the total number of parameters?
 
