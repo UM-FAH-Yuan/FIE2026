@@ -274,7 +274,7 @@ The complete scoring relationship among intervals is shown in the matrix below (
     <img src = "metrics/metrics.png">
 </div>
 
-> Note: σ ≈ 0.6827, corresponding to the probability mass within one standard deviation of a normal distribution.
+> Note: σ ≈ 0.6827, corresponding to the probability mass within one standard deviation of a normal distribution. 2σ ≈ 0.9545, corresponding to the probability mass within two standard deviation of a normal distribution.
 
 A team's **final score** is the **sum** of its scores over all evaluation instances.
 
