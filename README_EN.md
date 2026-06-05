@@ -142,7 +142,7 @@ In addition, this evaluation continues to offer two tracks: the **Prompt Track**
 
 ## 5.1 Scale and Source
 
-The evaluation provides both a sample set and an evaluation set in JSON format. The [sample set](sample%20sets) contains approximately 500–1,000 instances, and the evaluation set contains approximately 2,000–4,000 instances. The corpus is sourced from relevant real-world corpora by the organizing team, and has been adapted, annotated, and proofread.
+The evaluation provides both a sample set and an evaluation set in JSON format. The [sample set](sample%20sets) contains 566 instances, and the evaluation set contains 2958 instances. The corpus is sourced from relevant real-world corpora by the organizing team, and has been adapted, annotated, and proofread.
 
 Since the evaluation targets large language models, no training or validation sets are provided. Teams participating in the Fine-Tuning Track may use the sample set for model fine-tuning and may partition it into training and validation subsets at their discretion.
 
