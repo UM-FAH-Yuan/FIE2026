@@ -182,7 +182,7 @@ When `factivity` is `UNCERTAIN`, the `confidence` field must satisfy:
 若不满足要求，系统将返回错误：
 If the requirement is not met, the system will return the following error:
 
-    field value error : "confidence" must be null when "factivity" is "uncertain".
+    field value error : "confidence" must be 0.50 when "factivity" is "uncertain".
 
 ------------------------------------------------------------------------
 
