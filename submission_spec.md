@@ -104,9 +104,9 @@ If the field names do not meet the requirements (must be `track`, `id`, `factivi
 
 ## 5.1 track
 
-`track`字段取值只能为`"pr"`或`"ft"`。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
+`track`字段取值只能为`"pr"`或`"ft"`
 
-队伍在提交文件是必须检查所提交的文件与赛道是否匹配。如不匹配，则会返回。。。。。。。。。。。。。。。。。。。
+队伍在提交文件是必须检查所提交的文件与赛道是否匹配。如不匹配，则会返回。
 
 field value error : "track" must be "pr".（提示词赛道）
 field value error: "track" must be "ft".（微调赛道）
