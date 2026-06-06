@@ -88,9 +88,6 @@ If a data instance does not contain exactly 4 fields, the system will return the
 
     field quantity error : 4 fields are expected.
 
-其中 `XXX` 为 output 文件中的行号。
-where `XXX` is the line number in the output file.
-
 ## 4.2 字段名称检查 Field Name Check
 
 若字段名称不符合要求（必须为`track`、`id`、`factivity`、`confidence`），系统将返回错误：
