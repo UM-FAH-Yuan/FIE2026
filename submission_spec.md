@@ -205,7 +205,7 @@ If the requirement is not met, the system will return the following error:
 
  | 错误类型 Error Type                     |示例 Examples|
   |-------------------------------- |----------------------|
-  |数据条数错误 Incorrect data count|4999 条或 5001 条 4,999 or 5,001 instances |
+  |数据条数错误 Incorrect data count|2957 条或 2959 条 2957 or 2959 instances |
   |字段数量错误 Incorrect field count|少于或多于 4 个字段 Fewer or more than 4 fields|
   |字段名称错误 Incorrect field name |`fact`, `score`|
   |id 未升序 id not in ascending order| `1,3,2`|
@@ -230,7 +230,7 @@ All error messages follow a unified format:
   |------------------------ |--------------------
   |`file format error`      |文件不是合法 JSON The file is not a valid JSON file 
   |`file encoding error`    |文件编码不是 UTF-8 The file encoding is not UTF-8 
- | `object quantity error`  |数据条数不为 2958 The number of data instances is not 5,000 
+ | `object quantity error`  |数据条数不为 2958 The number of data instances is not 2958 
 |  `field quantity error`   |字段数量不为 4 The number of fields is not 4
 |  `field name error`       |字段名称不正确 The field names are incorrect
 |  `field value error`      |字段取值不符合要求 The field values do not meet the requirements
