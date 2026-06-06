@@ -14,6 +14,8 @@
 
 # 近期更新 
 
+![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 重要更新！新增了评测网站(https://fie2026.chineseroom.hk/)。
+
 ![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 重要更新！新增了[提示词赛道评测集20260606](dataset_pr_260606.json)和[微调赛道评测集20260606](dataset_ft_260606.json)。
 
 ![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 新增了`#5.7 测试基线（Baseline）`的内容。
@@ -150,7 +152,7 @@
 
 ## 5.1 数据规模与来源
 
-本次评测以JSON格式提供样例集和评测集。[样例集](sample%20sets)数据量为566条，评测集数量为2958条。语料由组织方团队筛选自相关真实语料库，并进行改编、标注与校对。
+本次评测以JSON格式提供样例集和评测集。[样例集](sample%20sets)数据量为566条，评测集(evaluation%20sets)数量为2958条。语料由组织方团队筛选自相关真实语料库，并进行改编、标注与校对。
 
 由于评测对象为大型语言模型，故而不提供训练集和验证集，选择参加微调赛道的队伍可将样例集数据用于模型微调训练，并自行从中划分出验证集。
 
