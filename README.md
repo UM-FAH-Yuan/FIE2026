@@ -14,6 +14,10 @@
 
 # 近期更新 
 
+![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 重要更新！新增了[提示词赛道评测集20260606](dataset_pr_260606.json)和[微调赛道评测集20260606](dataset_ft_260606.json)。
+
+![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 新增了`#5.7 测试基线（Baseline）`的内容。
+
 ![Static Badge](https://img.shields.io/badge/20260531-UPDATE-brightgreen?style=plastic) 重要更新！修正了[样例集20260502](sample%20sets/sample_20260502.json)中id'sp_549'的事实性factivity判断结果，由"FALSE"修正为"TRUE"。请以新版本为准。更新了`#10 常见问题`A10的内容。
 
 ![Static Badge](https://img.shields.io/badge/20260515-UPDATE-brightgreen?style=plastic) 更新了评测赛程：6月1日-6月7日将发布正式评测集（在发布7天内开放下载），各参赛队伍开展评测。
@@ -154,7 +158,7 @@
 
 （1）	`track`：赛道代码。赛道代码`pr`表示该数据用于提示词赛道评测，赛道代码`ft`表示该数据用于微调赛道评测。
 
-（2）	`id`：数据编号。编号格式采用“数据编号”的策略，与测试集中的`id`一一对应，按升序排列，如"1, 2, 3, 4, ..., 5000"。样例集数据以`sp_XXX`的格式编码。
+（2）	`id`：数据编号。编号格式采用“数据编号”的策略，与测试集中的`id`一一对应，按升序排列，如"1, 2, 3, 4, ..., 2958"。样例集数据以`sp_XXX`的格式编码。
 
 （3）	`text`：背景句，即主蕴含句。此字段提供叙实性推理所需的语境，模型需要以此为依据来判断结论句的真值情况。
 
@@ -243,6 +247,14 @@
 - 禁止对模型回答进行人工修正。
 - 允许使用代码对模型回答进行统一提取，但设计代码时需要注意可复现性。同时，如果模型回答中出现真假判断前后不一致的情况，不可以只提取其中一种判断，而需要重新调整提示词。
 - 提交文件的要求请见[提交文件说明](submission_spec.md)。
+
+## 5.7 测试基线 （Baseline）
+
+| 测试模型：        | 提示词方法 |
+| ----------------- | ------- |
+| deepseek-v4-flash | 2335.1278 |
+| deepseek-v4-pro | 2250.5429 |
+> 注：评测总分为2958分。
 
 <!--## 2.7 输出样例>
 
