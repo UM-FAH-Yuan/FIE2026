@@ -16,7 +16,7 @@
 
 ![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 重要更新！新增了评测网站(https://fie2026.chineseroom.hk/)。
 
-![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 重要更新！新增了[提示词赛道评测集20260606](dataset_pr_260606.json)和[微调赛道评测集20260606](dataset_ft_260606.json)。
+![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 重要更新！新增了[提示词赛道评测集20260606](evaluation%20sets/dataset_pr_260606.json)和[微调赛道评测集20260606](evaluation%20sets/dataset_ft_260606.json)。
 
 ![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 新增了`#5.7 测试基线（Baseline）`的内容。
 
