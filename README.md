@@ -14,9 +14,14 @@
 
 # 近期更新 
 
-![Static Badge](https://img.shields.io/badge/20260706-UPDATE-brightgreen?style=plastic) 评测结果公布。B榜成绩如下：
+![Static Badge](https://img.shields.io/badge/20260706-UPDATE-brightgreen?style=plastic) 评测结果公布。提示词赛道成绩如下：
 <div align="center">
     <img src = "leaderboard/prompt.png">
+</div>
+
+微调赛道成绩如下：
+
+<div align="center">
     <img src = "leaderboard/fine-tuning.png">
 </div>
 
