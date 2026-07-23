@@ -25,6 +25,8 @@
     <img src = "leaderboard/fine-tuning.png">
 </div>
 
+![Static Badge](https://img.shields.io/badge/20260723-UPDATE-brightgreen?style=plastic) 重要更新！评测技术报告投稿网站已开放(https://openreview.net/group?id=cips-cl.org/CCL/2026/Workshop/Eval#tab-your-consoles)。 投稿的截止时间为7月31日24时，请参赛队伍尽快投稿。投稿须知及相关信息见`#10 常见问题`Q13、A13的内容。
+
 ![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 重要更新！新增了评测网站(https://fie2026.chineseroom.hk/)。
 
 ![Static Badge](https://img.shields.io/badge/20260606-UPDATE-brightgreen?style=plastic) 重要更新！新增了[提示词赛道评测集20260606](evaluation%20sets/dataset_pr_260606.json)和[微调赛道评测集20260606](evaluation%20sets/dataset_ft_260606.json)。
@@ -407,6 +409,19 @@
 - ![Static Badge](https://img.shields.io/badge/20260501-UPDATE-blue?style=plastic) Q12: 为什么第二批样例集的数据格式和第一批不同？
 
   A12: 根据此前部分参赛队的反馈，我们调整了样例集数据标注的格式，以减少在标注结果上的争议。主要改动为：将`confidence`字段的标注结果由模仿模型回答格式的精确值调整为评价标准中的区间值。需要注意的是，这种标注格式仅用于样例集，参赛队在正式评测中提交的回答仍然需要按照[提交文件说明](submission_spec.md)的要求提供精确的confidence值。
+
+- Q13: 技术报告投稿须知
+
+  A13:
+  报告模板：将沿用去年CCL25的LaTeX模板，总页数约为4-6页（不含参考文献）。评测论文集与CCL2025一致，可参考该链接http://cips-cl.org/static/CCL2025/cclEssay/notice/index.html。
+
+  报告撰写：鼓励使用英文撰写。
+
+  共同一作：对于贡献相同的作者，允许其自行决定在报告中使用相同的角标进行标识。
+
+  EI检索：关于评测论文能否被EI检索的问题，评测主席方将积极沟通推进。
+
+  投稿须知：投稿的时候请选择相对应的 task，以方便后续送给评审。
 
 <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
