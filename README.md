@@ -22,7 +22,7 @@
 微调赛道成绩如下：
 
 <div align="center">
-    <img src = "leaderboard/fine-tuning.png">
+    <img src = "leaderboard/fine-tuning.PNG">
 </div>
 
 ![Static Badge](https://img.shields.io/badge/20260723-UPDATE-brightgreen?style=plastic) 重要更新！评测技术报告投稿网站已开放(https://openreview.net/group?id=cips-cl.org/CCL/2026/Workshop/Eval#tab-your-consoles)。 投稿的截止时间为7月31日24时，请参赛队伍尽快投稿。投稿须知及相关信息见`#10 常见问题`Q13、A13的内容。
