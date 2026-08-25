@@ -1,0 +1,528 @@
+{
+  "dataset": "/workspace/data_dir/USB_data/ljh_data/FIE2026/sample sets/sample_20260401.json",
+  "provider": "openai",
+  "model": "gpt-5.4-mini",
+  "prompt_lang": "zh",
+  "summary": {
+    "total": 69,
+    "correct": 54,
+    "accuracy": 0.782608695652174,
+    "per_label": {
+      "TRUE": {
+        "total": 47,
+        "correct": 40,
+        "accuracy": 0.851063829787234
+      },
+      "FALSE": {
+        "total": 18,
+        "correct": 11,
+        "accuracy": 0.6111111111111112
+      },
+      "UNCERTAIN": {
+        "total": 4,
+        "correct": 3,
+        "accuracy": 0.75
+      }
+    },
+    "confusion": {
+      "TRUE": {
+        "TRUE": 40,
+        "UNCERTAIN": 7
+      },
+      "FALSE": {
+        "FALSE": 11,
+        "UNCERTAIN": 6,
+        "TRUE": 1
+      },
+      "UNCERTAIN": {
+        "TRUE": 1,
+        "UNCERTAIN": 3
+      }
+    }
+  },
+  "predictions": [
+    {
+      "id": "sp_001",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“她今天穿了一件红色的连衣裙”，并且是否定的是“老张并没有注意到”这一点。对连衣裙这一命题本身，文本是当作事实陈述的。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_002",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本中说“他错误地认为地球是平的”，这说明“他”持有“地球是平的”这一信念，但说话人明确指出该信念是错误的，因此在文本语境中并不把“地球是平的”当作真命题，而是当作假命题。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_003",
+      "gold": "UNCERTAIN",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中“他认为那家新开的餐厅定价过高”直接表明说话主体把“新开的餐厅定价过高”当作真，因此 hypothesis 在该语境中为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_004",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 明确陈述审计人员在查阅账本后“才知道”该事件发生了，因此文本把“这笔巨额资金在上周三被转入了一个海外账户”当作已发生的事实来呈现。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_005",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接陈述“徐老师明白”后面的内容，说明说话人将“使用多媒体技术可以活跃课堂气氛”当作徐老师所认知并接受的事实，因此该命题在文本语境中被视为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_006",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说明“嫌疑人才得知他的同伙已经在两个小时前于火车站被警方成功抓获”，这表示该命题在文本中被当作已发生的事实陈述，没有否定或不确定色彩。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_007",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本中说“连守门人都不记得他来过，恐怕他的确是没去过”，主体倾向于认为他没有来过，即否定“他来过”这个命题。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_008",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 说“出来时幸好没有忘记带钱”，这直接表明他出来时带了钱；后文“口袋里有十多万元跑路费”也是对带钱的进一步说明。因此 hypothesis 在 text 语境中被当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_009",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 中明确说“老侦探还是瞬间认出……就是三年前那场银行劫案的主谋”，直接断言该命题为真，没有不确定或否定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_010",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“我感觉”表示说话人是在表达一种主观判断/推测，而不是直接陈述一个已被确认的事实，因此对“鸿渐喜欢唐晓芙”不作真值承诺。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_011",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本中先说“他居然觉得那是对他人格的侮辱”，这是在转述“他”的看法；但随后“其实人家只是出于好心想帮他一下”明确表示说话人否定这一看法，认为并不是侮辱，而是好意帮助。因此，hypothesis 所表达的命题在文本语境中被判为假。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_012",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接陈述“老人…仍旧怀有难以释怀的遗憾”，与 hypothesis 完全一致，说明主体将该命题视为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_013",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>原文明确说“教室后门的玻璃窗外有一只流浪猫正静静地注视着他们的一举一动”，直接断言了该命题为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_014",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“问题出在自己身上”，其中“自己”指代老李，因此文本把“问题出在老李身上”当作事实陈述。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_015",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本“约翰没意识到自己根本没钱”直接陈述了“约翰根本没钱”这一事实，并通过“没意识到”表示约翰对这一事实不自知，但说话人将其当作真的。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_016",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接陈述“鸿渐经常能够看见赵辛楣往苏文纨家里跑”，这等于把“赵辛楣经常往苏文纨家里跑”作为事实来叙述，因此 hypothesis 在该语境中为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_017",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 中说“露丝亲眼看到杰克缓缓沉入冰冷的海底”，这直接陈述了杰克沉入海底这一事件已经发生，因此 hypothesis 所表达的命题在该语境中被当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_018",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 明确说“鸿渐经常能够听见柔嘉躲在房间里哭泣”，这直接陈述了柔嘉经常躲在房间里哭泣这一事实，只是信息来源是鸿渐的听见，并未引入怀疑或否定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_019",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中说话人直接陈述“我听到他在轻声叹气”，这意味着说话人把“他在轻声叹气”当作已发生的事实来报告，因此该命题在文本语境中为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_020",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 中说话人直接叙述自己“昨天下午”在市中心繁忙的十字路口“碰见一位陌生的老人正在费力地搬运堆积如山的纸箱”，这等于把 hypothesis 所述事件作为已发生的事实来陈述，没有不确定或否定语气。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_021",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“错误地认为”，说明哥伦布所持观点是船队已经到达印度，但叙述者同时指出这一判断是错误的，因此在文本语境中该命题被判定为假。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_022",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本中说“你以为他是你朋友”，明确表示说话人并未直接断言“他是你朋友”为真，而是指出对方只是这么认为/以为，因此对该命题不作真值承诺。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_023",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“可以料想”表示根据前面的描述进行推测、判断，并非直接断言事实已经成立；因此说话人只是认为“他们夫妇二人都是好人”是一个可推想的结论，属于不确定的推断态度，而不是明确把它当作已知真命题。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_024",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本中“警方……推测”表明这是基于证据作出的推断，而不是已被确认的事实；因此说话主体对“凶手是一个身材高大且行动敏捷的惯犯”没有作出真值承诺，只是认为可能如此。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_025",
+      "gold": "UNCERTAIN",
+      "pred": "UNCERTAIN",
+      "ok": true,
+      "raw_output": "<think>文本中“纷纷猜测”表明现场观众只是对该结论进行推测，并没有把“主人公最终选择了放弃财富回归田园”当作已知事实来断言。因此该命题在文本语境中是不确定的。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_026",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“从没怀疑过”表示研究员们始终没有对“样本已经受到外界空气污染”这件事提出怀疑，也就是把该命题当作真实成立。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_027",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“我估计”表示说话人只是根据自己的判断进行推测，并未把“鸿渐喜欢唐晓芙”当作已确定事实来断言，因此对该命题只作不确定态度。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_028",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“我不该相信他是好人”表示说话人认为自己不应该持有“他是好人”这个信念，但并没有直接断定“他不是好人”。因此对“他是好人”这一命题本身不作真值承诺，属于不确定/态度性表述。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_029",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“我很高兴儿子结识了这样一位风度翩翩的朋友”直接陈述了儿子已经结识了一位风度翩翩的朋友，主体对该命题作了真值承诺。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_030",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接说“消费者不满意厂家把这款高端产品的包装弄得如此简陋粗糙”，这表明说话人/文本主体把“厂家把这款高端产品的包装弄得很简陋粗糙”当作已发生的事实来陈述，因此 hypothesis 在该语境中被视为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_031",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>text 中用“似乎也在伤心”表达的是一种主观推测/拟人化描写，并未直接断言“再也找不到一个可以安心依靠的温暖怀抱了”这一命题为真；只是把它作为流浪狗可能的感受或处境来描述，因此主体对该命题不作明确真值承诺。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_032",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“店员递给她时脸上流露出的那种轻蔑表情”，这是对店员表情的直接陈述，主体把该命题当作事实。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_033",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接陈述老师生气的原因是“学生对待作业的态度极其敷衍，连最基本的格式都没有遵守”，这说明说话人/叙述者把该命题当作事实来叙述，没有表示怀疑或否定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_034",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“我一点不奇怪他没有对此进行申诉”表达的是说话人对“他没有对此进行申诉”这一事件不感到意外，默认该事件已经发生。说话人并未否定这个命题，反而把它当作已然成立的事实来评论，因此叙实性为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_035",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接陈述“洪水瞬间吞没了整个村庄且未留下任何生机”，并进一步说“救援队员们无不震惊于大自然在愤怒时所展现出的毁灭性力量”。这表明说话人把“自然在愤怒时展现出毁灭性力量”当作事实来描述。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_036",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中说“回顾去年的决策时，庆幸当时没有选择盲目扩张，而是选择了稳健经营”，这直接陈述了高层去年确实没有盲目扩张并选择了稳健经营，因此命题被当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_037",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 表达的是“很多当地人后悔当初没去占个摊位租上间房子”，这说明说话人把“很多当地人当初没有去占个摊位租上间房子”当作已发生的事实来陈述，因此该命题在语境中为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_038",
+      "gold": "UNCERTAIN",
+      "pred": "UNCERTAIN",
+      "ok": true,
+      "raw_output": "<think>“担心”表示说话者/主体对“我会遇到坏人”这一事件持有担忧或可能性判断，并未把它当作已发生或必然为真，只是表达不确定的预期。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_039",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 中艺术评论家直接感叹画家对色彩运用的敏感度“非常敏锐且极具天赋”，与 hypothesis 语义一致，主体将该命题视为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_040",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“指责”表示约翰把“汤姆剽窃”当作一项指控来提出，通常意味着说话人/主体在语境中倾向于把该命题视为成立，而不是否定或仅仅猜测。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_041",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“经理没有批评团队工作不够努力”，这表示说话内容否定了“团队工作不够努力”这一命题。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_042",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中说话者直接陈述“竞争对手嘲讽我们团队提出的方案异想天开”，这表明在该语境里，“我们团队提出的方案异想天开”这一命题被当作已发生并成立的内容来描述。虽然这是竞争对手的嘲讽立场，但文本本身明确承载了该判断。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_043",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 中明确说“笑话班长今天的发型太奇怪，像个被雷劈过的鸟窝一样凌乱不堪”，这直接表达了说话人/叙述者对“班长今天的发型很奇怪”的肯定态度，因此该命题在语境中被当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_044",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“团队成员都兴高采烈地庆祝胜利”，说明比赛结果是胜利；队长不认可的是“这个依靠运气得来的比赛结果”，否定的是结果的正当性，而不是胜利这一事实本身。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_045",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>text 中主体是“环保组织”，其态度是否定的：他们“坚决不能认同”这种发展模式“是正确的”。这表明文本把 hypothesis 所述命题视为假。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_046",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“那位教授剽窃他人成果的行为”，把“剽窃他人成果”作为已发生的事实来陈述，并且后半句“视其为……”是对这一行为的评价，没有引入怀疑或否定。因此，hypothesis 在该语境中被当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_047",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“他十分厌恶邻居那种锱铢必较的性格”，这直接把“邻居的性格是锱铢必较的”当作已知事实来陈述，因此命题在文本中被视为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_048",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本中“公司高层在会议上宣称”明确引出一个说法，但后半句“一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学”表达的是对调整效果的否定，且没有对“让部门协作变得更加顺畅”这一命题作出确认。整体语境中该命题只是被宣称，并未被文本主体当作真，反而存在质疑与否定倾向，因此应判为不确定而非真。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_049",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中说“公司高层多次公开声明此次重组是为了员工福祉”，这直接陈述了重组的目的就是员工福祉，因此 hypothesis 在该语境下被当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_050",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本说“听到评委宣布自己的作品获得金奖而其他人的作品落选，她暗自窃喜”，其中“自己的作品获得金奖”是被直接陈述的事实，主体并未对其持怀疑或猜测态度，而是作为已发生的事情来接受。因此该命题在文本语境中被当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_051",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中明确说“老师…明确表示她最恨这种抄袭作业的风气，认为这是对知识最大的不尊重”，与假设内容完全一致，主体态度是明确肯定的。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_052",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“吹嘘”表示说话者在夸口，未必真实；文本只说他在自夸自己精通麻衣相术，并没有直接确认这件事为真，因此对“他精通麻衣相术”不作真值承诺，属于不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_053",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接断言“审计结果清晰披露公司的资金分配方案极不合理，导致核心研发部门长期处于匮乏状态”，其中 hypothesis 所述内容被明确作为事实陈述出现，没有任何否定或不确定语气。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_054",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接陈述警方通过监控和指纹“迅速查明”该小偷就是内部员工，说明说话人将该命题作为已确认事实来叙述。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_055",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中“主场球迷欢呼他们的球队在补时阶段完成了不可思议的逆转”直接陈述了这一事件已发生，裁判判定进球有效也支持该结果，因此主体把该命题视为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_056",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本中“审计部门在年度检查中发现异常，随即控告该部门负责人虚报项目开支并侵吞了原本用于扶贫的专项拨款”是在陈述审计部门的控告内容，但“控告”本身只表示提出指控，并不等于文本作者已经将该指控事实当作已证实真相。因此对 hypothesis 所述命题，文本语境中主体并未作真值承诺，属于不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_057",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“嫁祸于人，诬陷李大钊等人率众冲击国务院”，表示说话人认为这一指控不属实，因此对命题“李大钊等人率众冲击了国务院”持否定态度。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_058",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 中“营养学家指出”是在陈述一种他人观点，并且其后直接给出了“长期坚持素食不利于身体健康”这一命题。这里说话人是在转述并采纳该判断为事实陈述，因此该命题在 text 语境中被当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_059",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“小王坦白是他拿走了票据”明确陈述了小王拿走了票据这一事实，因此文本将该命题视为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_060",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中“他最后说……事实已经证明，建设三峡工程的决策是理性的、科学的”直接断言该决策是理性、科学的，把命题当作真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_061",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中“最终估算出该物种在野外的现存总数不足两百只”直接陈述了这一命题，表明说话人/主体将其视为事实成立。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_062",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>text 明确说“并没有计划”在城市中心地带修建高架快速路，直接否定了 hypothesis 所述事件发生，因此为假。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_063",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>text 明确说“没有试图美化任何一方的政治决策”，这与 hypothesis 中“美化了其中一方的政治决策”直接矛盾，因此该命题在 text 语境中被否定。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_064",
+      "gold": "UNCERTAIN",
+      "pred": "UNCERTAIN",
+      "ok": true,
+      "raw_output": "<think>文本中说话人表达的是“多么希望你还是我记忆中的那个孙悦”，这是一种愿望/希望，而不是对“你还是我记忆中的那个孙悦”这一命题作出事实断言。句子前面还有“我不知道你现在是什么样子”，进一步表明说话人对该命题并不确定。因此该命题在语境中属于不作真值承诺的态度。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_065",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本中“教练组不敢期待年轻队员能在决赛现场发挥出超常水平并赢得胜利”表示教练组对该命题持不确定/不作真值承诺的态度，并没有把它当作已发生的事实；只是说不敢期待其实现。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_066",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本说“到死还在幻想……送来长生不老药的情景”，明确表示这只是秦始皇的幻想，并不是真实发生的事情，因此命题为假。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_067",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“他梦想……”表明说话人陈述的是他的愿望/想象，而不是断言“那光明可以立刻来临”这一命题在现实中已被当作事实成立。该命题只是梦想内容，属于不确定的愿望性态度。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_068",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>text 明确说“奥德修斯假装自己是乞丐”，说明他并不是真的乞丐，而是在伪装成乞丐，因此 hypothesis 所表达的命题在该语境中被否定。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_069",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本只是说“被举报涉嫌学术不端”并引发讨论，表示存在指控和怀疑，但没有断定他确实学术不端，因此命题未被当作真来陈述。</think>\n<answer>UNCERTAIN</answer>"
+    }
+  ]
+}

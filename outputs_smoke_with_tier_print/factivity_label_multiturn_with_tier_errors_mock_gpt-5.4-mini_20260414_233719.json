@@ -1,0 +1,68 @@
+{
+  "dataset": "E:\\Git Repos\\FIE2026\\sample sets\\sample_20260401_with_tiers.json",
+  "provider": "mock",
+  "model": "gpt-5.4-mini",
+  "prompt_lang": "zh",
+  "summary": {
+    "total": 1,
+    "correct": 1,
+    "accuracy": 1.0,
+    "per_label": {
+      "TRUE": {
+        "total": 1,
+        "correct": 1,
+        "accuracy": 1.0
+      },
+      "FALSE": {
+        "total": 0,
+        "correct": 0,
+        "accuracy": 0.0
+      },
+      "UNCERTAIN": {
+        "total": 0,
+        "correct": 0,
+        "accuracy": 0.0
+      }
+    },
+    "confusion": {
+      "TRUE": {
+        "TRUE": 1
+      }
+    },
+    "confidence_tier_summary": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 1.0,
+      "per_tier": {
+        "强": {
+          "total": 1,
+          "correct": 1,
+          "accuracy": 1.0
+        }
+      },
+      "confusion": {
+        "强": {
+          "强": 1
+        }
+      }
+    },
+    "final_tier_summary": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 1.0,
+      "per_tier": {
+        "强正叙实": {
+          "total": 1,
+          "correct": 1,
+          "accuracy": 1.0
+        }
+      },
+      "confusion": {
+        "强正叙实": {
+          "强正叙实": 1
+        }
+      }
+    }
+  },
+  "errors": []
+}

@@ -1,0 +1,335 @@
+[
+  {
+    "id": "sp_001",
+    "text": "老张并没有注意到她今天穿了一件红色的连衣裙。",
+    "hypothesis": "她今天穿了一件红色的连衣裙。",
+    "factivity": "TRUE",
+    "confidence": 0.95,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_002",
+    "text": "他错误地认为地球是平的。",
+    "hypothesis": "地球是平的。",
+    "factivity": "FALSE",
+    "confidence": 0.99,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_004",
+    "text": "在查阅了公司的财务账本后，审计人员才知道这笔巨额资金在上周三被转入了一个海外账户。",
+    "hypothesis": "这笔巨额资金在上周三被转入了一个海外账户。",
+    "factivity": "TRUE",
+    "confidence": 1.0,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_006",
+    "text": "直到警察敲开房门并出示了搜查令，躲在屋内的嫌疑人才得知他的同伙已经在两个小时前于火车站被警方成功抓获。",
+    "hypothesis": "嫌疑人的同伙已经在两个小时前于火车站被警方成功抓获。",
+    "factivity": "TRUE",
+    "confidence": 0.98,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_008",
+    "text": "而他出来时幸好没有忘记带钱，所以口袋里有十多万元跑路费……",
+    "hypothesis": "他出来时带钱了。",
+    "factivity": "TRUE",
+    "confidence": 0.98,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_009",
+    "text": "尽管伪装得十分巧妙，经验丰富的老侦探还是瞬间认出混迹于宾客之中的嫌疑人就是三年前那场银行劫案的主谋。",
+    "hypothesis": "混迹于宾客之中的嫌疑人就是三年前那场银行劫案的主谋。",
+    "factivity": "TRUE",
+    "confidence": 0.93,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_012",
+    "text": "读完那封尘封已久的信件，老人才缓缓发觉自己对当年那段无疾而终的恋情仍旧怀有难以释怀的遗憾。",
+    "hypothesis": "老人对当年那段无疾而终的恋情仍旧怀有难以释怀的遗憾。",
+    "factivity": "TRUE",
+    "confidence": 0.93,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_013",
+    "text": "坐在前排认真听讲的学生们没有察觉到教室后门的玻璃窗外有一只流浪猫正静静地注视着他们的一举一动。",
+    "hypothesis": "教室后门的玻璃窗外有一只流浪猫正静静地注视着学生们的一举一动。",
+    "factivity": "TRUE",
+    "confidence": 0.98,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_014",
+    "text": "老李迟钝地发现问题出在自己身上。",
+    "hypothesis": "问题出在老李身上。",
+    "factivity": "TRUE",
+    "confidence": 0.93,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_015",
+    "text": "约翰没意识到自己根本没钱。",
+    "hypothesis": "约翰根本没钱。",
+    "factivity": "TRUE",
+    "confidence": 0.93,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_016",
+    "text": "鸿渐经常能够看见赵辛楣往苏文纨家里跑。",
+    "hypothesis": "赵辛楣经常往苏文纨家里跑。",
+    "factivity": "TRUE",
+    "confidence": 0.94,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_017",
+    "text": "露丝亲眼看到杰克缓缓沉入冰冷的海底。",
+    "hypothesis": "杰克缓缓沉入了冰冷的海底。",
+    "factivity": "TRUE",
+    "confidence": 1.0,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_018",
+    "text": "鸿渐经常能够听见柔嘉躲在房间里哭泣。",
+    "hypothesis": "柔嘉经常躲在房间里哭泣。",
+    "factivity": "TRUE",
+    "confidence": 0.88,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_019",
+    "text": "我听到他在轻声叹气。",
+    "hypothesis": "他在轻声叹气。",
+    "factivity": "TRUE",
+    "confidence": 0.9,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_020",
+    "text": "昨天下午，我在市中心繁忙的十字路口碰见一位陌生的老人正在费力地搬运堆积如山的纸箱。",
+    "hypothesis": "昨天下午，一位陌生的老人曾在市中心繁忙的十字路口费力地搬运堆积如山的纸箱。",
+    "factivity": "TRUE",
+    "confidence": 0.98,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_021",
+    "text": "哥伦布错误地认为自己的船队已经到达了印度。",
+    "hypothesis": "哥伦布的船队已经到达了印度。",
+    "factivity": "FALSE",
+    "confidence": 0.96,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_032",
+    "text": "她并不是真的在乎那件衣服的价格，而是非常介意店员递给她时脸上流露出的那种轻蔑表情。",
+    "hypothesis": "店员递给她衣服时脸上流露出一种轻蔑的表情。",
+    "factivity": "TRUE",
+    "confidence": 0.89,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_033",
+    "text": "老师站在讲台上，生气学生对待作业的态度极其敷衍，连最基本的格式都没有遵守。",
+    "hypothesis": "学生对待作业的态度极其敷衍，连最基本的格式都没有遵守。",
+    "factivity": "TRUE",
+    "confidence": 0.9,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_034",
+    "text": "我一点不奇怪他没有对此进行申诉。",
+    "hypothesis": "他没有对此进行申诉。",
+    "factivity": "TRUE",
+    "confidence": 0.95,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_035",
+    "text": "看到那场突如其来的洪水瞬间吞没了整个村庄且未留下任何生机，救援队员们无不震惊于大自然在愤怒时所展现出的毁灭性力量。",
+    "hypothesis": "大自然在愤怒时展现出了毁灭性力量。",
+    "factivity": "TRUE",
+    "confidence": 0.95,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_036",
+    "text": "公司高层在回顾去年的决策时，庆幸当时没有选择盲目扩张，而是选择了稳健经营。",
+    "hypothesis": "公司高层去年没有选择盲目扩张，而是选择了稳健经营。",
+    "factivity": "TRUE",
+    "confidence": 1.0,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_037",
+    "text": "很多当地人后悔当初没去占个摊位租上间房子。",
+    "hypothesis": "很多当地人当初没有去占个摊位租上间房子。",
+    "factivity": "TRUE",
+    "confidence": 0.97,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_039",
+    "text": "凝视着画中那抹夕阳下金色的麦田，艺术评论家感叹画家对色彩运用的敏感度实在是非常敏锐且极具天赋。",
+    "hypothesis": "画家对色彩运用的敏感度非常敏锐且极具天赋。",
+    "factivity": "TRUE",
+    "confidence": 0.91,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_044",
+    "text": "尽管团队成员都兴高采烈地庆祝胜利，但队长却不认可这个依靠运气得来的比赛结果。",
+    "hypothesis": "团队胜利了。",
+    "factivity": "TRUE",
+    "confidence": 0.99,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_050",
+    "text": "听到评委宣布自己的作品获得金奖而其他人的作品落选，她暗自窃喜。",
+    "hypothesis": "她的作品获得了金奖。",
+    "factivity": "TRUE",
+    "confidence": 0.98,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_051",
+    "text": "老师站在讲台上严肃地看着全班同学，明确表示她最恨这种抄袭作业的风气，认为这是对知识最大的不尊重。",
+    "hypothesis": "老师最恨这种抄袭作业的风气，认为这是对知识最大的不尊重。",
+    "factivity": "TRUE",
+    "confidence": 0.96,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_053",
+    "text": "审计结果清晰披露公司的资金分配方案极不合理，导致核心研发部门长期处于匮乏状态。",
+    "hypothesis": "公司的资金分配方案极不合理，导致核心研发部门长期处于匮乏状态。",
+    "factivity": "TRUE",
+    "confidence": 0.96,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_054",
+    "text": "警方通过调取监控录像和比对指纹，迅速查明那个在深夜潜入仓库的小偷就是内部员工。",
+    "hypothesis": "那个在深夜潜入仓库的小偷就是内部员工。",
+    "factivity": "TRUE",
+    "confidence": 0.98,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_055",
+    "text": "当裁判最终吹哨判定进球有效时，主场球迷欢呼他们的球队在补时阶段完成了不可思议的逆转。",
+    "hypothesis": "他们的球队在补时阶段完成了不可思议的逆转。",
+    "factivity": "TRUE",
+    "confidence": 0.99,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_057",
+    "text": "段祺瑞政府为开脱罪责，嫁祸于人，诬陷李大钊等人率众冲击国务院。",
+    "hypothesis": "李大钊等人率众冲击了国务院。",
+    "factivity": "FALSE",
+    "confidence": 0.93,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_058",
+    "text": "营养学家指出，长期坚持素食不利于身体健康。",
+    "hypothesis": "长期坚持素食不利于身体健康。",
+    "factivity": "TRUE",
+    "confidence": 0.89,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_059",
+    "text": "小王坦白是他拿走了票据。",
+    "hypothesis": "是小王拿走了票据。",
+    "factivity": "TRUE",
+    "confidence": 0.94,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_060",
+    "text": "他最后说，三峡工程即将平稳进入商业运行轨道的事实已经证明，建设三峡工程的决策是理性的、科学的。",
+    "hypothesis": "建设三峡工程的决策是理性的、科学的。",
+    "factivity": "TRUE",
+    "confidence": 0.89,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_062",
+    "text": "市政规划局并没有计划在城市中心地带修建一条高架快速路。",
+    "hypothesis": "市政规划局在城市中心地带修建了一条高架快速路。",
+    "factivity": "FALSE",
+    "confidence": 0.99,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_063",
+    "text": "那位著名的历史学家在撰写关于冷战时期的专著时，没有试图美化任何一方的政治决策，而是客观地罗列了当时各国解密档案中记录的真实数据与外交函件。",
+    "hypothesis": "那位著名的历史学家在撰写关于冷战时期的专著时，美化了其中一方的政治决策。",
+    "factivity": "FALSE",
+    "confidence": 0.93,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_066",
+    "text": "秦始皇到死还在幻想方士们给他送来长生不老药的情景。",
+    "hypothesis": "方士们给秦始皇送来了长生不老药。",
+    "factivity": "FALSE",
+    "confidence": 0.97,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "强"
+  },
+  {
+    "id": "sp_068",
+    "text": "奥德修斯假装自己是乞丐，进入了王宫。",
+    "hypothesis": "奥德修斯是乞丐。",
+    "factivity": "FALSE",
+    "confidence": 0.93,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "强"
+  }
+]

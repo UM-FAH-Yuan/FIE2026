@@ -1,0 +1,157 @@
+{
+  "dataset": "/workspace/data_dir/USB_data/ljh_data/FIE2026/sample sets/sample_20260401.json",
+  "provider": "openai",
+  "model": "gpt-5.4",
+  "prompt_lang": "en",
+  "summary": {
+    "total": 69,
+    "correct": 53,
+    "accuracy": 0.7681159420289855,
+    "per_label": {
+      "TRUE": {
+        "total": 47,
+        "correct": 39,
+        "accuracy": 0.8297872340425532
+      },
+      "FALSE": {
+        "total": 18,
+        "correct": 11,
+        "accuracy": 0.6111111111111112
+      },
+      "UNCERTAIN": {
+        "total": 4,
+        "correct": 3,
+        "accuracy": 0.75
+      }
+    },
+    "confusion": {
+      "TRUE": {
+        "TRUE": 39,
+        "UNCERTAIN": 8
+      },
+      "FALSE": {
+        "FALSE": 11,
+        "TRUE": 3,
+        "UNCERTAIN": 4
+      },
+      "UNCERTAIN": {
+        "TRUE": 1,
+        "UNCERTAIN": 3
+      }
+    }
+  },
+  "errors": [
+    {
+      "id": "sp_003",
+      "gold": "UNCERTAIN",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中“他认为那家新开的餐厅定价过高”明确表达了主语“他”对命题“新开的餐厅定价过高”持肯定态度，即把该命题当作真的来看待。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_010",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“我感觉鸿渐喜欢唐晓芙”中的“感觉”表示说话人是基于主观感受或推测，并未把“鸿渐喜欢唐晓芙”当作确定事实来断言，因此对该命题的态度是不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_022",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>“你以为他是你朋友”中的“以为”表示主语“你”把命题“他是你朋友”当作真的来看待。因此在文本语境下，认知主体对该命题持真态度。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_023",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“可以料想”表示根据线索进行推想、推测，并非确定陈述。因此文本中的说话者对“他们夫妇二人都是好人”没有作出确定真值承诺，而是表达一种推断性的、不完全确定的态度。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_024",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本中“警方根据现场留下的指纹和脚印，推测……”表明这是警方的推测，而不是确定事实。主体对该命题持不确定态度。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_027",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“我估计鸿渐喜欢唐晓芙”中的“估计”表示说话人是在猜测/推测，并未把“鸿渐喜欢唐晓芙”当作确定事实来断言，因此对该命题不作真值承诺。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_031",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本中说“似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了”。关键词是“似乎”，表示说话者是在推测流浪狗的心境，而不是断言该命题为真。因此，对假设“那只流浪狗再也找不到一个可以安心依靠的温暖怀抱了”并没有作出确定真值承诺，属于不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_040",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“约翰指责汤姆剽窃”表示约翰提出了这一指控，但“指责”不预设被指责内容为真。文本只说明约翰的态度，不承诺汤姆确实剽窃了，因此对假设命题的真值不作确定承诺。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_042",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中“竞争对手嘲讽我们团队提出的方案异想天开”表明说话主体（竞争对手）将“我们团队提出的方案异想天开”当作真的来嘲讽和断言。虽然这是竞争对手的负面评价，但其立场是把该命题视为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_048",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中“公司高层在会议上宣称这次组织架构调整让部门协作变得更加顺畅”表明说话主体是“公司高层”，其对该命题持肯定态度，即将其当作真来宣称。后半句是一线员工对“新的汇报机制更合理科学”的否定感受，并不直接否定“部门协作变得更加顺畅”这一命题在高层口中的立场。因此该假设在文本中的态度是被主体当作真的。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_052",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“吹嘘自己精通”表示他声称/夸耀自己精通，但说话人并未承诺这一命题为真，带有不确定甚至怀疑色彩。文本主体对“他精通麻衣相术”未作事实性确认。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_056",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本说“审计部门…随即控告该部门负责人虚报项目开支并侵吞了…拨款”。“控告”表示提出指控，说明审计部门认为该命题成立，但并未把它当作既定事实直接断言。属于指控/主张，而非事实承诺，因此是UNCERTAIN。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_062",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本说“市政规划局并没有计划在城市中心地带修建一条高架快速路”，否定的是“计划修建”，而假设是“已经修建了一条”。文本没有直接断言已经修建或没有修建，只是否认有该计划，因此对假设的真值没有明确承诺。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_065",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本说“教练组不敢期待年轻队员能在决赛现场发挥出超常水平并赢得胜利”。“不敢期待”表示教练组对该命题不作肯定承诺，倾向于不指望其发生，但并未明确断言其为假。因此对该命题的态度是未确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_067",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“梦想”表示愿望/憧憬，不表示说话人或主语把命题当作已真或确定为真。文本只说他希望“那光明可以立刻来临”，并未承诺其真的可以立刻来临，因此对该命题的态度是不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_069",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本说“被举报涉嫌学术不端”，只是指他被指控、涉嫌，并未表明说话者将“他学术不端”当作既定事实。属于未作真值承诺。</think>\n<answer>UNCERTAIN</answer>"
+    }
+  ]
+}

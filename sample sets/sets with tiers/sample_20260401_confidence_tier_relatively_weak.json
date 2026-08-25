@@ -1,0 +1,110 @@
+[
+  {
+    "id": "sp_011",
+    "text": "他居然觉得那是对他人格的侮辱！其实人家只是出于好心想帮他一下。",
+    "hypothesis": "那是对他人格的侮辱。",
+    "factivity": "FALSE",
+    "confidence": 0.68,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_022",
+    "text": "你以为他是你朋友，所以你才这么相信他吧!",
+    "hypothesis": "他是你朋友。",
+    "factivity": "FALSE",
+    "confidence": 0.69,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_024",
+    "text": "警方根据现场留下的指纹和脚印，推测凶手是一个身材高大且行动敏捷的惯犯。",
+    "hypothesis": "凶手是一个身材高大且行动敏捷的惯犯。",
+    "factivity": "TRUE",
+    "confidence": 0.63,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_026",
+    "text": "实验室的研究员们从没怀疑过培养皿中突然变色的细菌样本已经受到了外界空气的污染。",
+    "hypothesis": "培养皿中突然变色的细菌样本已经受到了外界空气的污染。",
+    "factivity": "TRUE",
+    "confidence": 0.69,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_028",
+    "text": "我不该相信他是好人。",
+    "hypothesis": "他是好人。",
+    "factivity": "FALSE",
+    "confidence": 0.74,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_043",
+    "text": "同学们在后排窃窃私语，笑话班长今天的发型太奇怪，像个被雷劈过的鸟窝一样凌乱不堪。",
+    "hypothesis": "班长今天的发型很奇怪。",
+    "factivity": "TRUE",
+    "confidence": 0.75,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_048",
+    "text": "尽管公司高层在会议上宣称这次组织架构调整让部门协作变得更加顺畅，一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学。",
+    "hypothesis": "这次组织架构调整让部门协作变得更加顺畅。",
+    "factivity": "FALSE",
+    "confidence": 0.66,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_052",
+    "text": "他吹嘘自己精通麻衣相术。",
+    "hypothesis": "他精通麻衣相术。",
+    "factivity": "FALSE",
+    "confidence": 0.75,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_056",
+    "text": "审计部门在年度检查中发现异常，随即控告该部门负责人虚报项目开支并侵吞了原本用于扶贫的专项拨款。",
+    "hypothesis": "该部门负责人虚报项目开支并侵吞了原本用于扶贫的专项拨款。",
+    "factivity": "TRUE",
+    "confidence": 0.75,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_061",
+    "text": "生态学家通过长期监测森林中某种珍稀鸟类的繁殖数量与栖息地面积变化，最终估算出该物种在野外的现存总数不足两百只。",
+    "hypothesis": "该物种在野外的现存总数不足两百只。",
+    "factivity": "TRUE",
+    "confidence": 0.69,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_067",
+    "text": "他梦想那光明可以立刻来临。",
+    "hypothesis": "那光明可以立刻来临。",
+    "factivity": "FALSE",
+    "confidence": 0.68,
+    "factivity_tier": "反叙实",
+    "confidence_tier": "较弱"
+  },
+  {
+    "id": "sp_069",
+    "text": "他在学术期刊上发表的关于古代气候变迁的研究论文，因数据来源标注不清且部分图表与早年文献高度重合，被举报涉嫌学术不端而引发了学界广泛讨论。",
+    "hypothesis": "他学术不端。",
+    "factivity": "TRUE",
+    "confidence": 0.72,
+    "factivity_tier": "正叙实",
+    "confidence_tier": "较弱"
+  }
+]

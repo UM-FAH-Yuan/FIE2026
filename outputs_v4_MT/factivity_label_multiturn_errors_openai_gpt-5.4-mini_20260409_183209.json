@@ -1,0 +1,279 @@
+{
+  "dataset": "/workspace/data_dir/USB_data/ljh_data/FIE2026/sample sets/sample_20260401.json",
+  "provider": "openai",
+  "model": "gpt-5.4-mini",
+  "prompt_lang": "zh",
+  "summary": {
+    "total": 69,
+    "correct": 56,
+    "accuracy": 0.8115942028985508,
+    "per_label": {
+      "TRUE": {
+        "total": 47,
+        "correct": 42,
+        "accuracy": 0.8936170212765957
+      },
+      "FALSE": {
+        "total": 18,
+        "correct": 11,
+        "accuracy": 0.6111111111111112
+      },
+      "UNCERTAIN": {
+        "total": 4,
+        "correct": 3,
+        "accuracy": 0.75
+      }
+    },
+    "confusion": {
+      "TRUE": {
+        "UNCERTAIN": 5,
+        "TRUE": 42
+      },
+      "FALSE": {
+        "UNCERTAIN": 5,
+        "FALSE": 11,
+        "TRUE": 2
+      },
+      "UNCERTAIN": {
+        "TRUE": 1,
+        "UNCERTAIN": 3
+      }
+    }
+  },
+  "errors": [
+    {
+      "id": "sp_001",
+      "text": "老张并没有注意到她今天穿了一件红色的连衣裙。",
+      "hypothesis": "她今天穿了一件红色的连衣裙。",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 老张并没有注意到她今天穿了一件红色的连衣裙。\nhypothesis: 她今天穿了一件红色的连衣裙。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "她",
+        "attitude_predicate": "并没有注意到",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>text 的主语是“老张”，对应第三方；hypothesis 的命题主语是“她”；text 中相关态度谓语是“并没有注意到”；没有提供额外事实根据。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>她</proposition_subject>\n<attitude_predicate>并没有注意到</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 老张并没有注意到她今天穿了一件红色的连衣裙。\nhypothesis: 她今天穿了一件红色的连衣裙。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 她\nattitude_predicate: 并没有注意到\nbasis: 无",
+      "second_turn_output": "<think>“老张并没有注意到”表示老张对“她今天穿了一件红色的连衣裙”这一命题没有认知/感知支持，也没有给出事实根据；原句只是否定了老张的注意，并不直接否定该命题本身，但由于缺少承诺与证据，属于不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_002",
+      "text": "他错误地认为地球是平的。",
+      "hypothesis": "地球是平的。",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 他错误地认为地球是平的。\nhypothesis: 地球是平的。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "地球",
+        "attitude_predicate": "错误地认为",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>text 中的相关主语是“他”，属于第三方而非说话人；hypothesis 的命题主语是“地球”；text 中体现其态度的关键谓语是“错误地认为”；文本未提供额外事实根据或证据。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>地球</proposition_subject>\n<attitude_predicate>错误地认为</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 他错误地认为地球是平的。\nhypothesis: 地球是平的。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 地球\nattitude_predicate: 错误地认为\nbasis: 无",
+      "second_turn_output": "<think>相关主语是第三方“他”，其态度是“错误地认为”。这属于一个没有事实根据支撑的错误信念，不构成说话人对“地球是平的”的真实承诺；结合 basis 为“无”，应判为不确定倾向。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_003",
+      "text": "他认为那家新开的餐厅定价过高，普通工薪阶层根本消费不起。",
+      "hypothesis": "新开的餐厅定价过高。",
+      "gold": "UNCERTAIN",
+      "pred": "TRUE",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 他认为那家新开的餐厅定价过高，普通工薪阶层根本消费不起。\nhypothesis: 新开的餐厅定价过高。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "那家新开的餐厅",
+        "attitude_predicate": "认为那家新开的餐厅定价过高",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>text中的相关主语是“他”，属于第三方而非说话人；hypothesis的命题主语是“那家新开的餐厅”。text中态度谓语是“认为那家新开的餐厅定价过高”，其中直接对应命题的部分是“定价过高”。文本没有提供具体事实依据、证据或来源，只是主观判断。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>那家新开的餐厅</proposition_subject>\n<attitude_predicate>认为那家新开的餐厅定价过高</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 他认为那家新开的餐厅定价过高，普通工薪阶层根本消费不起。\nhypothesis: 新开的餐厅定价过高。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 那家新开的餐厅\nattitude_predicate: 认为那家新开的餐厅定价过高\nbasis: 无",
+      "second_turn_output": "<think>相关主语是第三方“他”，其态度谓语明确是“认为……定价过高”，这与 hypothesis“新开的餐厅定价过高”一致；虽然没有事实依据，但这里不是弱心理态度的无关猜测，而是对该命题的直接判断表达，因此倾向为肯定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_011",
+      "text": "他居然觉得那是对他人格的侮辱！其实人家只是出于好心想帮他一下。",
+      "hypothesis": "那是对他人格的侮辱。",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 他居然觉得那是对他人格的侮辱！其实人家只是出于好心想帮他一下。\nhypothesis: 那是对他人格的侮辱。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "那",
+        "attitude_predicate": "觉得那是对他人格的侮辱",
+        "basis": "其实人家只是出于好心想帮他一下"
+      },
+      "first_turn_output": "<think>text 中的相关主语是“他”，不是说话人；hypothesis 的命题主语是“那”。text 中体现的态度谓语是“觉得那是对他人格的侮辱”。同时 text 里有反向说明“其实人家只是出于好心想帮他一下”，可作为对该判断的背景/依据。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>那</proposition_subject>\n<attitude_predicate>觉得那是对他人格的侮辱</attitude_predicate>\n<basis>其实人家只是出于好心想帮他一下</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 他居然觉得那是对他人格的侮辱！其实人家只是出于好心想帮他一下。\nhypothesis: 那是对他人格的侮辱。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 那\nattitude_predicate: 觉得那是对他人格的侮辱\nbasis: 其实人家只是出于好心想帮他一下",
+      "second_turn_output": "<think>相关主语是第三方“他”，其态度谓语明确表示“觉得那是对他人格的侮辱”，这正是对 hypothesis 命题的认可；basis“其实人家只是出于好心想帮他一下”是对其误解的纠正，但不改变文本中该第三方对命题的倾向。根据规则，应判为正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_022",
+      "text": "你以为他是你朋友，所以你才这么相信他吧!",
+      "hypothesis": "他是你朋友。",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 你以为他是你朋友，所以你才这么相信他吧!\nhypothesis: 他是你朋友。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "他",
+        "attitude_predicate": "你以为他是你朋友，所以你才这么相信他",
+        "basis": "你以为他是你朋友"
+      },
+      "first_turn_output": "<think>text 中的主语是“你”，属于第二人称的说话对象，不是说话人本人，也不是第三方明确陈述的信念来源；hypothesis 的命题主语是“他”。句子“你以为他是你朋友，所以你才这么相信他吧!”表达的是“你”对“他是你朋友”的看法，并以此作为相信他的原因。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>他</proposition_subject>\n<attitude_predicate>你以为他是你朋友，所以你才这么相信他</attitude_predicate>\n<basis>你以为他是你朋友</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 你以为他是你朋友，所以你才这么相信他吧!\nhypothesis: 他是你朋友。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 他\nattitude_predicate: 你以为他是你朋友，所以你才这么相信他\nbasis: 你以为他是你朋友",
+      "second_turn_output": "<think>句中“你以为他是你朋友”表明这是对“你”的看法/推测，而不是说话人确认“他是你朋友”的事实；basis 只是“你以为”，属于主观认知依据，没有直接事实支持，因此对 hypothesis 只能视为不确定承诺。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_027",
+      "text": "我估计鸿渐喜欢唐晓芙。",
+      "hypothesis": "鸿渐喜欢唐晓芙。",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 我估计鸿渐喜欢唐晓芙。\nhypothesis: 鸿渐喜欢唐晓芙。",
+      "extraction": {
+        "subject_type": "说话人",
+        "proposition_subject": "鸿渐",
+        "attitude_predicate": "我估计",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>文本中说话人使用“我估计”表达对命题“鸿渐喜欢唐晓芙”的主观判断；命题主语是“鸿渐”；没有给出进一步事实依据。</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>鸿渐</proposition_subject>\n<attitude_predicate>我估计</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 我估计鸿渐喜欢唐晓芙。\nhypothesis: 鸿渐喜欢唐晓芙。\n\n抽取结果：\nsubject_type: 说话人\nproposition_subject: 鸿渐\nattitude_predicate: 我估计\nbasis: 无",
+      "second_turn_output": "<think>说话人使用“我估计”表达对“鸿渐喜欢唐晓芙”的推测，并非直接断言事实成立，因此对命题没有真实承诺，属于不确定倾向。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_031",
+      "text": "那只流浪狗蜷缩在墙角，似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了。",
+      "hypothesis": "那只流浪狗再也找不到一个可以安心依靠的温暖怀抱了。",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 那只流浪狗蜷缩在墙角，似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了。\nhypothesis: 那只流浪狗再也找不到一个可以安心依靠的温暖怀抱了。",
+      "extraction": {
+        "subject_type": "无",
+        "proposition_subject": "那只流浪狗",
+        "attitude_predicate": "似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>text 和 hypothesis 的命题主语都是“那只流浪狗”。原句中“似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了”体现的是一种对该命题的主观推测/感受，并非明确事实依据；可提取的态度谓语是“似乎也在伤心自己再也找不到……”。</think>\n<subject_type>无</subject_type>\n<proposition_subject>那只流浪狗</proposition_subject>\n<attitude_predicate>似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 那只流浪狗蜷缩在墙角，似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了。\nhypothesis: 那只流浪狗再也找不到一个可以安心依靠的温暖怀抱了。\n\n抽取结果：\nsubject_type: 无\nproposition_subject: 那只流浪狗\nattitude_predicate: 似乎也在伤心自己再也找不到一个可以安心依靠的温暖怀抱了\nbasis: 无",
+      "second_turn_output": "<think>原句对“那只流浪狗再也找不到一个可以安心依靠的温暖怀抱了”使用了“似乎也在伤心”的表达，属于对流浪狗心理状态的推测和描写，没有事实根据支撑，也不是直接断言该命题为真。根据规则应判为不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_040",
+      "text": "约翰指责汤姆剽窃。",
+      "hypothesis": "汤姆剽窃了。",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 约翰指责汤姆剽窃。\nhypothesis: 汤姆剽窃了。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "汤姆",
+        "attitude_predicate": "指责",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>文本中相关主语是“约翰”，他对“汤姆剽窃”这一命题的态度是“指责”，但没有给出具体证据或来源。假设命题的主语是“汤姆”。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>汤姆</proposition_subject>\n<attitude_predicate>指责</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 约翰指责汤姆剽窃。\nhypothesis: 汤姆剽窃了。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 汤姆\nattitude_predicate: 指责\nbasis: 无",
+      "second_turn_output": "<think>文本只说明“约翰指责汤姆剽窃”，这是对汤姆的指控，并不等于确认汤姆确实剽窃。没有提供证据或事实支撑，因此对“汤姆剽窃了”只能视为未被承诺的指控。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_042",
+      "text": "竞争对手嘲讽我们团队提出的方案异想天开，完全是浪费公司资源的愚蠢行为。",
+      "hypothesis": "我们团队提出的方案异想天开。",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 竞争对手嘲讽我们团队提出的方案异想天开，完全是浪费公司资源的愚蠢行为。\nhypothesis: 我们团队提出的方案异想天开。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "我们团队提出的方案",
+        "attitude_predicate": "嘲讽我们团队提出的方案异想天开，完全是浪费公司资源的愚蠢行为",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>text 中的相关主语是“竞争对手”，不是说话人；hypothesis 的命题主语是“我们团队提出的方案”；text 中对应的态度表达是“嘲讽……异想天开，完全是浪费公司资源的愚蠢行为”；文本没有提供独立证据或事实根据，只是带有评价性的陈述。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>我们团队提出的方案</proposition_subject>\n<attitude_predicate>嘲讽我们团队提出的方案异想天开，完全是浪费公司资源的愚蠢行为</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 竞争对手嘲讽我们团队提出的方案异想天开，完全是浪费公司资源的愚蠢行为。\nhypothesis: 我们团队提出的方案异想天开。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 我们团队提出的方案\nattitude_predicate: 嘲讽我们团队提出的方案异想天开，完全是浪费公司资源的愚蠢行为\nbasis: 无",
+      "second_turn_output": "<think>相关主语是“竞争对手”，属于第三方而非说话人。原句明确表示竞争对手“嘲讽”并直接断言“我们团队提出的方案异想天开”，这是对 hypothesis 命题的正向陈述，不是弱猜测；尽管 basis 为无，但 attitude_predicate 本身已经清楚表达了该命题成立。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_048",
+      "text": "尽管公司高层在会议上宣称这次组织架构调整让部门协作变得更加顺畅，一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学。",
+      "hypothesis": "这次组织架构调整让部门协作变得更加顺畅。",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 尽管公司高层在会议上宣称这次组织架构调整让部门协作变得更加顺畅，一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学。\nhypothesis: 这次组织架构调整让部门协作变得更加顺畅。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "这次组织架构调整",
+        "attitude_predicate": "宣称这次组织架构调整让部门协作变得更加顺畅",
+        "basis": "一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学"
+      },
+      "first_turn_output": "<think>text 中与 hypothesis 对应的主语是“公司高层”，不是说话人本身，因此 subject_type 为第三方。hypothesis 的主语是“这次组织架构调整”。text 中对应的态度表达是“宣称这次组织架构调整让部门协作变得更加顺畅”。支撑信息来自“一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学”，这表明存在反面观察/体验作为相关依据。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>这次组织架构调整</proposition_subject>\n<attitude_predicate>宣称这次组织架构调整让部门协作变得更加顺畅</attitude_predicate>\n<basis>一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 尽管公司高层在会议上宣称这次组织架构调整让部门协作变得更加顺畅，一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学。\nhypothesis: 这次组织架构调整让部门协作变得更加顺畅。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 这次组织架构调整\nattitude_predicate: 宣称这次组织架构调整让部门协作变得更加顺畅\nbasis: 一线员工在实际操作过程中却没有觉得新的汇报机制比原来的模式更加合理科学",
+      "second_turn_output": "<think>相关主语是第三方“公司高层”，其态度谓语是“宣称这次组织架构调整让部门协作变得更加顺畅”，这是对 hypothesis 的正向表述。但原句同时给出了一线员工的实际体验，说明新的汇报机制并未被认为更合理科学，形成对该宣称的现实反向依据。综合看，说话人并未直接承诺该命题为真，而是呈现“高层宣称/员工不认可”的对比，因此对 hypothesis 的最终倾向是不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_052",
+      "text": "他吹嘘自己精通麻衣相术。",
+      "hypothesis": "他精通麻衣相术。",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 他吹嘘自己精通麻衣相术。\nhypothesis: 他精通麻衣相术。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "他",
+        "attitude_predicate": "吹嘘自己精通麻衣相术",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>text 中的主语是“他”，不是说话人；hypothesis 的命题主语也是“他”。“吹嘘自己精通麻衣相术”体现的是对“精通麻衣相术”这一命题的夸耀/宣称态度，而不是客观证据；未给出具体根据。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>他</proposition_subject>\n<attitude_predicate>吹嘘自己精通麻衣相术</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 他吹嘘自己精通麻衣相术。\nhypothesis: 他精通麻衣相术。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 他\nattitude_predicate: 吹嘘自己精通麻衣相术\nbasis: 无",
+      "second_turn_output": "<think>“吹嘘自己精通麻衣相术”表明说话人只是转述他人的自夸，并未提供证据支持该命题；在 basis 为“无”的情况下，这更像是未被证实的宣称，而不是对“他精通麻衣相术”的事实承诺，因此应判为不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_067",
+      "text": "他梦想那光明可以立刻来临。",
+      "hypothesis": "那光明可以立刻来临。",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 他梦想那光明可以立刻来临。\nhypothesis: 那光明可以立刻来临。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "那光明",
+        "attitude_predicate": "梦想",
+        "basis": "无"
+      },
+      "first_turn_output": "<think>text 中的主语是“他”，属于第三方；hypothesis 的命题主语是“那光明”；text 里的关键谓语/态度表达是“梦想”，表示他对该命题的愿望或期待；未出现事实根据、来源或证据。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>那光明</proposition_subject>\n<attitude_predicate>梦想</attitude_predicate>\n<basis>无</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 他梦想那光明可以立刻来临。\nhypothesis: 那光明可以立刻来临。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 那光明\nattitude_predicate: 梦想\nbasis: 无",
+      "second_turn_output": "<think>主语“他”是第三方，态度谓语是“梦想”，属于没有事实根据的愿望/想象；basis 为“无”，因此只是表达希望，并未断言命题为真。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_069",
+      "text": "他在学术期刊上发表的关于古代气候变迁的研究论文，因数据来源标注不清且部分图表与早年文献高度重合，被举报涉嫌学术不端而引发了学界广泛讨论。",
+      "hypothesis": "他学术不端。",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "first_turn_prompt": "任务：从给定的 text 和 hypothesis 中提取一组中间字段，用于后续叙实性判断。\n\n这一步不要直接做 TRUE/FALSE/UNCERTAIN 的最终判断。\n你只需要提取下面这些字段，供下一步推断说话人的倾向。\n\n字段定义：\n1. subject_type：\n   - 说话人：text 中相关的主语就是说话人或叙述者\n   - 第三方：text 中相关的主语不是说话人，而是其他人\n   - 无：相关主语缺省或未明确出现\n2. proposition_subject：\n   - hypothesis 所表达命题的主语\n   - 如果没有明确主语，输出 无\n3. attitude_predicate：\n   - text 中体现相关主语对该命题态度的关键谓语或表达\n4. basis：\n   - text 中出现的事实根据、来源、证据、权威、观察、调查结果、纠正信息或其他支撑\n   - 如果没有这类根据，输出 无\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<subject_type>说话人</subject_type>\n<proposition_subject>...</proposition_subject>\n<attitude_predicate>...</attitude_predicate>\n<basis>...</basis>\n\ntext: 他在学术期刊上发表的关于古代气候变迁的研究论文，因数据来源标注不清且部分图表与早年文献高度重合，被举报涉嫌学术不端而引发了学界广泛讨论。\nhypothesis: 他学术不端。",
+      "extraction": {
+        "subject_type": "第三方",
+        "proposition_subject": "他",
+        "attitude_predicate": "被举报涉嫌学术不端",
+        "basis": "数据来源标注不清且部分图表与早年文献高度重合"
+      },
+      "first_turn_output": "<think>文本主语是“他”，属于第三方；命题主语也是“他”。文本中的态度相关谓语是“被举报涉嫌学术不端而引发了学界广泛讨论”，其中“被举报涉嫌学术不端”表明与命题相关的指向；支撑依据是“数据来源标注不清且部分图表与早年文献高度重合”。</think>\n<subject_type>第三方</subject_type>\n<proposition_subject>他</proposition_subject>\n<attitude_predicate>被举报涉嫌学术不端</attitude_predicate>\n<basis>数据来源标注不清且部分图表与早年文献高度重合</basis>",
+      "second_turn_prompt": "任务：结合中间抽取结果和原始 text，判断 hypothesis 的最终叙实性标签。\n\n最重要的是判断说话人对 hypothesis 所表达命题的倾向。\n\n请按照以下规则判断：\n1. 先看相关主语是不是认知主体。\n   如果 subject_type 是“说话人”，就直接根据该主语的倾向判断。\n2. 如果 subject_type 不是“说话人”，就看句中归属于该主语的立场。\n   如果只是没有事实根据、来源或证据支撑的猜测、认为、希望、担心、幻想等弱心理态度，且 basis 为“无”，则判为 UNCERTAIN。\n3. 否则，如果句中给出了事实根据、来源、证据、观察、调查结果、纠正信息、权威信息或其他支撑，就把这些根据视为说话人隐含倾向的支撑。\n4. 结合 attitude_predicate、basis 以及原句整体语义，判断说话人的倾向究竟是正向、反向还是不确定。\n\n判断规则：\n- 正向倾向 -> TRUE\n- 反向倾向 -> FALSE\n- 没有真实承诺的不确定倾向 -> UNCERTAIN\n\n输出要求：\n请严格按照以下格式输出，不要输出其他格式：\n<think>你的分析</think>\n<answer>TRUE</answer>\n\n其中 answer 只能是 TRUE、FALSE、UNCERTAIN 三者之一。\n\n原始 text: 他在学术期刊上发表的关于古代气候变迁的研究论文，因数据来源标注不清且部分图表与早年文献高度重合，被举报涉嫌学术不端而引发了学界广泛讨论。\nhypothesis: 他学术不端。\n\n抽取结果：\nsubject_type: 第三方\nproposition_subject: 他\nattitude_predicate: 被举报涉嫌学术不端\nbasis: 数据来源标注不清且部分图表与早年文献高度重合",
+      "second_turn_output": "<think>文本中主语是第三方“他”，命题也是“他学术不端”。句子表达的是“被举报涉嫌学术不端”，这是对该命题的指控/怀疑，而不是直接事实确认；同时给出的依据“数据来源标注不清且部分图表与早年文献高度重合”只是支持举报的理由，但原文仍停留在“涉嫌”层面，没有明确断定他确有学术不端。因此说话人对 hypothesis 的最终倾向是不确定。</think>\n<answer>UNCERTAIN</answer>"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "dataset": "/workspace/data_dir/USB_data/ljh_data/FIE2026/sample sets/sample_20260401.json",
+  "provider": "openai",
+  "model": "gpt-5.4-mini",
+  "prompt_lang": "zh",
+  "summary": {
+    "total": 69,
+    "correct": 62,
+    "accuracy": 0.8985507246376812,
+    "per_label": {
+      "TRUE": {
+        "total": 47,
+        "correct": 46,
+        "accuracy": 0.9787234042553191
+      },
+      "FALSE": {
+        "total": 18,
+        "correct": 13,
+        "accuracy": 0.7222222222222222
+      },
+      "UNCERTAIN": {
+        "total": 4,
+        "correct": 3,
+        "accuracy": 0.75
+      }
+    },
+    "confusion": {
+      "TRUE": {
+        "TRUE": 46,
+        "UNCERTAIN": 1
+      },
+      "FALSE": {
+        "FALSE": 13,
+        "TRUE": 3,
+        "UNCERTAIN": 2
+      },
+      "UNCERTAIN": {
+        "TRUE": 1,
+        "UNCERTAIN": 3
+      }
+    }
+  },
+  "errors": [
+    {
+      "id": "sp_003",
+      "gold": "UNCERTAIN",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中“他认为那家新开的餐厅定价过高”直接表达了对“新开的餐厅定价过高”这一命题的肯定，因此说话人对该命题呈正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_011",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中直接重复并强调“那是对他人格的侮辱”，这是说话人明确编码出的判断，因此对该命题呈正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_022",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本中的“你以为他是你朋友”表明说话人是在描述“你”持有一种看法，但这并不等于说话人自己确认“他是你朋友”这一命题为真。整句更像是在质疑或指出对方基于这个想法而过度相信他，因此对“他是你朋友”这一命题并没有直接肯定，也没有明确否定，只是作为被提到的认知内容出现。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_042",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中直接说“我们团队提出的方案异想天开”，这是对 hypothesis 内容的正向陈述；虽然带有嘲讽和贬义，但并不否定“异想天开”这一命题，反而明确表达了这一点。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_052",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>“吹嘘自己精通”虽然带有“自夸”的评价色彩，但其内容是说话人把“他精通麻衣相术”作为被吹嘘的命题呈现出来，整体对该命题是正向倾向；并没有否定或表示不确定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_067",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“梦想”表示说话人/主语对“那光明可以立刻来临”这一命题持向往、幻想式态度，并不直接断言其为事实，也没有证据支持；因此这是对该命题的非承诺性表达，属于不确定倾向。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_069",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本说他的论文“因数据来源标注不清且部分图表与早年文献高度重合，被举报涉嫌学术不端”，这只是在陈述“涉嫌/被举报”，属于指控与讨论，并没有直接断言他确实学术不端。因此对“他学术不端”这一命题的说话人态度是不确定，缺乏明确承诺。</think>\n<answer>UNCERTAIN</answer>"
+    }
+  ]
+}

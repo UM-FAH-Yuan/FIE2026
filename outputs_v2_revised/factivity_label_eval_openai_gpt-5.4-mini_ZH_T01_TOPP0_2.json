@@ -1,0 +1,529 @@
+{
+  "dataset": "/workspace/data_dir/USB_data/ljh_data/FIE2026/sample sets/sample_20260401.json",
+  "provider": "openai",
+  "model": "gpt-5.4-mini",
+  "prompt_lang": "zh",
+  "summary": {
+    "total": 69,
+    "correct": 60,
+    "accuracy": 0.8695652173913043,
+    "per_label": {
+      "TRUE": {
+        "total": 47,
+        "correct": 45,
+        "accuracy": 0.9574468085106383
+      },
+      "FALSE": {
+        "total": 18,
+        "correct": 13,
+        "accuracy": 0.7222222222222222
+      },
+      "UNCERTAIN": {
+        "total": 4,
+        "correct": 2,
+        "accuracy": 0.5
+      }
+    },
+    "confusion": {
+      "TRUE": {
+        "UNCERTAIN": 2,
+        "TRUE": 45
+      },
+      "FALSE": {
+        "FALSE": 13,
+        "TRUE": 3,
+        "UNCERTAIN": 2
+      },
+      "UNCERTAIN": {
+        "TRUE": 1,
+        "UNCERTAIN": 2,
+        "FALSE": 1
+      }
+    }
+  },
+  "predictions": [
+    {
+      "id": "sp_001",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本明确陈述“老张并没有注意到她今天穿了一件红色的连衣裙”，这表示的是老张没有察觉到这一事实，但并没有否定“她今天穿了红色连衣裙”这个命题本身。文本对该命题没有给出正向或反向的直接立场，因此只能视为不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_002",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“他错误地认为地球是平的”，表示说话人否定“地球是平的”这一命题，并指出该观点是错误的，因此对 hypothesis 表达反向倾向。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_003",
+      "gold": "UNCERTAIN",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中“他认为那家新开的餐厅定价过高”直接表达了对“新开的餐厅定价过高”这一命题的正向立场；后面的“普通工薪阶层根本消费不起”也与定价过高相一致，进一步支持该判断。因此 hypothesis 在 text 中呈现为 TRUE。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_004",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 明确说审计人员在查阅财务账本后“才知道”这笔巨额资金在上周三被转入海外账户，这表示该命题在文本中被当作事实陈述并获得账本证据支持，不是单纯猜测或不确定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_005",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中主语“徐老师”明白“使用多媒体技术可以活跃课堂气氛”，这表示他对该命题持正向认同立场，尽管是“明白”而非直接断言，但已明确支持该命题。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_006",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接陈述“他的同伙已经在两个小时前于火车站被警方成功抓获”，这是叙述者对该事实的正向断言，没有不确定或否定成分，因此为 TRUE。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_007",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本中说“连守门人都不记得他来过，恐怕他的确是没去过”，这表达的是对“他来过”这一命题的反向倾向：根据不记得来过这一线索，推向“没去过”。因此 hypothesis 在该语境中被否定。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_008",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 明确说“幸好没有忘记带钱”，这直接支持“他出来时带钱了”。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_009",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接断言“混迹于宾客之中的嫌疑人就是三年前那场银行劫案的主谋”，与 hypothesis 完全一致，呈现为明确肯定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_010",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“我感觉”表示说话人对“鸿渐喜欢唐晓芙”这一命题的主观判断，虽然带有不确定性，但明确呈现为正向倾向，而不是否定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_011",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中直接出现“他居然觉得那是对他人格的侮辱”，这表明主语“他”对“那是对他人格的侮辱”这一命题持正向立场；后半句“其实人家只是出于好心想帮他一下”是叙述者的纠正，但并没有否定“他觉得”的事实，而是说明这种看法与事实不符。就叙实性标签而言，文本对该命题呈现为被某人认定为真，因此判为 TRUE。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_012",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接陈述“老人...仍旧怀有难以释怀的遗憾”，与 hypothesis 完全一致，属于明确正向倾向的断言。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_013",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 明确陈述“教室后门的玻璃窗外有一只流浪猫正静静地注视着他们的一举一动”，这是对 hypothesis 所表达命题的直接断言，没有否定或不确定语气，因此为正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_014",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“问题出在自己身上”，其中“自己”指代老李，因此对“问题出在老李身上”是直接肯定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_015",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“约翰没意识到自己根本没钱”，这直接以叙述方式呈现“约翰根本没钱”这一命题为事实背景，因此对 hypothesis 是正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_016",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接陈述“鸿渐经常能够看见赵辛楣往苏文纨家里跑”，这等同于肯定赵辛楣经常往苏文纨家里去这一事实，和假设命题一致，因此为正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_017",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 明确说“露丝亲眼看到杰克缓缓沉入冰冷的海底”，这是直接的视觉证据，且该事件以发生事实被陈述出来，因此 hypothesis 所述命题在 text 中呈现为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_018",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接陈述“鸿渐经常能够听见柔嘉躲在房间里哭泣”，这等于明确支持“柔嘉经常躲在房间里哭泣”这一命题，没有否定或不确定成分。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_019",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“我听到他在轻声叹气”直接陈述了说话人感知到“他在轻声叹气”这一事件，文本对该命题是正向断言，没有否定或不确定标记。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_020",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接陈述了“我”昨天下午在市中心繁忙的十字路口碰见一位陌生老人正在费力搬运堆积如山的纸箱，这与 hypothesis 的命题内容完全一致，属于明确肯定的叙述。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_021",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“哥伦布错误地认为自己的船队已经到达了印度”，说明“船队已经到达了印度”只是哥伦布的错误想法，而非文本所承诺的事实；因此该命题在文本中呈现为被否定。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_022",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本“你以为他是你朋友，所以你才这么相信他吧”表达的是说话人指出“你”把“他”当成朋友。这里并没有直接断言“他确实是你朋友”，而是在描述“你以为/认为”这一心理状态，因此对命题“他是你朋友”只是呈现为被认为成立，而非文本自身承担该事实。根据题目要求，这种仅有认知态度、缺乏事实承诺的情况应判为不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_023",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“可以料想”表示根据前文对冯太太“慈眉善目”的评价，对“他们夫妇二人都是好人”形成了正向推断，并非单纯不确定；因此该命题在文本中呈现为被支持的倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_024",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中“警方根据现场留下的指纹和脚印”说明该判断有证据基础；“推测凶手是一个身材高大且行动敏捷的惯犯”虽然使用了“推测”，但整体是对该命题的正向指向，而非单纯不确定的猜想。因此该命题在语境中呈现为被支持、被认为成立。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_025",
+      "gold": "UNCERTAIN",
+      "pred": "UNCERTAIN",
+      "ok": true,
+      "raw_output": "<think>文本中说“现场观众纷纷猜测”主人公最终选择了放弃财富回归田园，这表示这一命题只是被猜测出来，并未被文本直接断言为事实，也没有提供证据支持，因此属于不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_026",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本说“从没怀疑过……已经受到了外界空气的污染”，表示研究员们并不怀疑该命题，且是对“已经受到了污染”这一事实的正向承认，因此该命题在文本中呈现为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_027",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“我估计”表示说话人对“鸿渐喜欢唐晓芙”持有正向的推断倾向，而不是否定；虽然不是直接事实断言，但文本明确偏向该命题成立。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_028",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>“我不该相信他是好人”是否定“他是好人”这一命题的可信性，表达的是对该命题的反向倾向，因此在语境中对应为 FALSE。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_029",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“我很高兴儿子结识了这样一位风度翩翩的朋友”直接表明说话人认可并接受“儿子结识了一位风度翩翩的朋友”这一事实陈述，且没有任何否定或怀疑成分，因此该命题在语境中为正向成立。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_030",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 明确陈述“厂家把这款高端产品的包装弄得如此简陋粗糙”，并且还用“极不相称”表达对这一包装状况的不满。hypothesis 只是把该内容改写为“非常简陋粗糙”，与原文一致，没有反向或不确定成分。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_031",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中用“似乎”表明这是叙述者对流浪狗情绪和处境的推断，但后半句直接表达了“再也找不到一个可以安心依靠的温暖怀抱了”这一命题，并与前面的“蜷缩在墙角”“伤心”形成一致的正向支持关系。整体上文本对该命题呈现为肯定倾向，而不是否定或纯不确定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_032",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“店员递给她时脸上流露出的那种轻蔑表情”，这直接支持了假设中的命题：店员递给她衣服时脸上流露出一种轻蔑的表情。因此为正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_033",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接陈述“学生对待作业的态度极其敷衍，连最基本的格式都没有遵守”，与 hypothesis 完全一致，没有否定或不确定成分。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_034",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“我一点不奇怪他没有对此进行申诉”表示说话人对“他没有对此进行申诉”这一事实持接受/预期的态度，虽然不是直接断言，但对该命题有正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_035",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接描述“洪水瞬间吞没了整个村庄且未留下任何生机”，并且指出救援队员们震惊于“大自然在愤怒时所展现出的毁灭性力量”。这不仅是情感反应，而是对“自然在愤怒时展现毁灭性力量”这一命题的正向呈现与肯定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_036",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“庆幸当时没有选择盲目扩张，而是选择了稳健经营”，这直接支持假设所述事件，属于正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_037",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 说“很多当地人后悔当初没去占个摊位租上间房子”，这表示他们对“当初没有去”持否定/遗憾态度，隐含认为当初确实没有去做这件事。因此 hypothesis 所述命题在 text 中被支持。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_038",
+      "gold": "UNCERTAIN",
+      "pred": "FALSE",
+      "ok": false,
+      "raw_output": "<think>“父亲隐约地担心”表示父亲对“我会遇到坏人”这一命题持有担忧态度，即对该命题有负向预期/倾向，但并未直接断言其为事实。因此在叙实性上是对该命题的反向倾向。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_039",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中艺术评论家直接赞叹画家“对色彩运用的敏感度实在是非常敏锐且极具天赋”，这与假设命题完全一致，属于正向表述。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_040",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“约翰指责汤姆剽窃”只表明约翰对汤姆有剽窃的指控/看法，但不等于文本确认汤姆确实剽窃。该命题在文本中没有被断言为真，也没有明确被否定，只是被归入指责内容，因此是不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_041",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“经理没有批评团队工作不够努力”，这是否定了“团队工作不够努力”这一命题；相反还肯定了团队的应变能力。因此 hypothesis 在 text 语境中呈现为反向倾向。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_042",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中直接说“竞争对手嘲讽我们团队提出的方案异想天开”，这表明“我们团队提出的方案异想天开”在语境中被明确呈现为对方的评价，并且是正向对应于该命题的陈述，而不是否定或纯粹不确定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_043",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接说“笑话班长今天的发型太奇怪”，明确对“班长今天的发型很奇怪”这一命题作出肯定评价，因此是正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_044",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“庆祝胜利”，并且提到“这个依靠运气得来的比赛结果”，说明比赛结果被当作胜利结果来讨论；因此“团队胜利了”在语境中呈现为成立。队长不认可的是胜利结果的正当性/归因，不是否认胜利本身。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_045",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“环保组织坚决不能认同……是正确的”，这表示对该命题持反向立场，而不是不确定。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_046",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接说“那位教授剽窃他人成果的行为”，这是对“教授剽窃了他人成果”这一命题的直接陈述，并且作为被鄙视的对象被当作既成事实来描述，因此呈现为正向断言。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_047",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“邻居那种锱铢必较的性格”，这是对邻居性格的直接描述，并且与假设“邻居的性格是锱铢必较的”一致。前半句还表达了“他十分厌恶”这一态度，进一步表明说话语境中对该性格的认定是正向承认而非否定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_048",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本前半句提到公司高层“宣称”这次组织架构调整让部门协作更顺畅，但后半句明确说一线员工在实际操作中“没有觉得”新的汇报机制比原来的模式更合理科学。整体来看，文本并没有支持该命题，反而通过“尽管...却没有觉得...”表达了对该正向评价的否定或不成立，因此对应命题在文本语境中呈现为反向倾向。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_049",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中明确说“公司高层多次公开声明此次重组是为了员工福祉”，这是对假设命题的直接正向陈述，没有否定或不确定化。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_050",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“她的作品获得金奖”，属于直接陈述，与“暗自窃喜”相一致，因此命题在语境中为正向成立。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_051",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 中明确陈述“老师...明确表示她最恨这种抄袭作业的风气，认为这是对知识最大的不尊重”，与 hypothesis 完全一致，且是直接断言，没有不确定性。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_052",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>“吹嘘自己精通麻衣相术”表示他在自夸并声称自己精通该术，这对“他精通麻衣相术”这一命题是正向倾向，但语境里只是“吹嘘”，并未给出真实证据；不过在叙实性判断中，文本所表达的是对该命题的肯定性陈述倾向，因此判为 TRUE。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_053",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 直接陈述“审计结果清晰披露”了该命题：公司的资金分配方案极不合理，并且导致核心研发部门长期处于匮乏状态。这里不是猜测而是明确断言，因此对 hypothesis 呈正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_054",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本中“警方通过调取监控录像和比对指纹，迅速查明”表明这一结论有明确证据支持，并且对“那个在深夜潜入仓库的小偷就是内部员工”作出肯定判断，因此该命题在语境中为真。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_055",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本直接陈述主场球迷欢呼的原因是“他们的球队在补时阶段完成了不可思议的逆转”，该命题在文本中被当作已发生的事实来呈现，属于正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_056",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说审计部门在年度检查中“发现异常”，并“控告该部门负责人虚报项目开支并侵吞了原本用于扶贫的专项拨款”。这里对 hypothesis 所述命题是以审计发现和控告的形式呈现出来的，属于有事实/调查依据支持的指控立场，不是单纯猜测；在文本语境中对该命题表现为正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_057",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“诬陷李大钊等人率众冲击国务院”，这里的“诬陷”表示该指控并不被文本采信，反而是在否定这一命题的真实性。因此 hypothesis 所表述的事件在文本语境中呈现为反向倾向。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_058",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>text 中明确陈述“营养学家指出”该命题，属于对 hypothesis 的正向断言，没有否定或不确定表达。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_059",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>“小王坦白是他拿走了票据”直接陈述了小王承认自己拿走了票据，因此文本对“是小王拿走了票据”这一命题是正向倾向，属于确认。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_060",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确断言“三峡工程即将平稳进入商业运行轨道的事实已经证明”后，直接得出“建设三峡工程的决策是理性的、科学的”。这不是不确定，而是对该命题的正向肯定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_061",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“最终估算出该物种在野外的现存总数不足两百只”，这直接支持假设所述命题，并且是带有依据的估算结果，因此在文本语境中为正向倾向。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_062",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>text 明确说“并没有计划”在城市中心地带修建高架快速路，表示该命题被否定；hypothesis 说已经“修建了一条”，与文本立场相反。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_063",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>text明确说这位历史学家“没有试图美化任何一方的政治决策”，而是假装客观罗列真实数据与外交函件。因此 hypothesis 说他“美化了其中一方的政治决策”与原文立场直接相反，为反向倾向。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_064",
+      "gold": "UNCERTAIN",
+      "pred": "UNCERTAIN",
+      "ok": true,
+      "raw_output": "<think>文本中说“我多么希望你还是我记忆中的那个孙悦”，这是说话者的愿望，而不是对“你还是我记忆中的那个孙悦”这一命题的事实断言。没有证据或直接确认，只表达希望成立，因此属于不确定的态度。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_065",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>text 中说“教练组不敢期待年轻队员能在决赛现场发挥出超常水平并赢得胜利”，这是对 hypothesis 所述命题的反向态度：并不期待其实现，且语义上暗示认为其难以发生，因此应判为 FALSE。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_066",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本说“到死还在幻想……送来长生不老药的情景”，明确是“幻想”，并未陈述这件事真的发生了；相反是在否定其为事实，仅表达秦始皇的想象。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_067",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“他梦想……”表明主语对“那光明可以立刻来临”这一命题持希望/向往的正向态度，但这只是梦想，并未把该命题作为事实断言，也没有证据支持其实现。因此对该命题在文本中的叙实性应判为不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_068",
+      "gold": "FALSE",
+      "pred": "FALSE",
+      "ok": true,
+      "raw_output": "<think>文本说奥德修斯“假装自己是乞丐”，这表示他并不是真的乞丐，而是在伪装成乞丐，因此对“奥德修斯是乞丐”这一命题呈现反向倾向。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_069",
+      "gold": "TRUE",
+      "pred": "TRUE",
+      "ok": true,
+      "raw_output": "<think>文本明确说“因数据来源标注不清且部分图表与早年文献高度重合，被举报涉嫌学术不端”，这表明文本中对“他学术不端”这一命题呈现出明显的正向倾向。虽然措辞是“涉嫌”，但结合给出的事实依据，文本不是纯猜测，而是在支持该指控成立的方向上。</think>\n<answer>TRUE</answer>"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "dataset": "/workspace/data_dir/USB_data/ljh_data/FIE2026/sample sets/sample_20260401.json",
+  "provider": "openai",
+  "model": "gpt-5.4-mini",
+  "prompt_lang": "zh",
+  "summary": {
+    "total": 69,
+    "correct": 60,
+    "accuracy": 0.8695652173913043,
+    "per_label": {
+      "TRUE": {
+        "total": 47,
+        "correct": 45,
+        "accuracy": 0.9574468085106383
+      },
+      "FALSE": {
+        "total": 18,
+        "correct": 13,
+        "accuracy": 0.7222222222222222
+      },
+      "UNCERTAIN": {
+        "total": 4,
+        "correct": 2,
+        "accuracy": 0.5
+      }
+    },
+    "confusion": {
+      "TRUE": {
+        "UNCERTAIN": 2,
+        "TRUE": 45
+      },
+      "FALSE": {
+        "FALSE": 13,
+        "TRUE": 3,
+        "UNCERTAIN": 2
+      },
+      "UNCERTAIN": {
+        "TRUE": 1,
+        "UNCERTAIN": 2,
+        "FALSE": 1
+      }
+    }
+  },
+  "errors": [
+    {
+      "id": "sp_001",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本明确陈述“老张并没有注意到她今天穿了一件红色的连衣裙”，这表示的是老张没有察觉到这一事实，但并没有否定“她今天穿了红色连衣裙”这个命题本身。文本对该命题没有给出正向或反向的直接立场，因此只能视为不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_003",
+      "gold": "UNCERTAIN",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中“他认为那家新开的餐厅定价过高”直接表达了对“新开的餐厅定价过高”这一命题的正向立场；后面的“普通工薪阶层根本消费不起”也与定价过高相一致，进一步支持该判断。因此 hypothesis 在 text 中呈现为 TRUE。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_011",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中直接出现“他居然觉得那是对他人格的侮辱”，这表明主语“他”对“那是对他人格的侮辱”这一命题持正向立场；后半句“其实人家只是出于好心想帮他一下”是叙述者的纠正，但并没有否定“他觉得”的事实，而是说明这种看法与事实不符。就叙实性标签而言，文本对该命题呈现为被某人认定为真，因此判为 TRUE。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_022",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>文本“你以为他是你朋友，所以你才这么相信他吧”表达的是说话人指出“你”把“他”当成朋友。这里并没有直接断言“他确实是你朋友”，而是在描述“你以为/认为”这一心理状态，因此对命题“他是你朋友”只是呈现为被认为成立，而非文本自身承担该事实。根据题目要求，这种仅有认知态度、缺乏事实承诺的情况应判为不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_038",
+      "gold": "UNCERTAIN",
+      "pred": "FALSE",
+      "ok": false,
+      "raw_output": "<think>“父亲隐约地担心”表示父亲对“我会遇到坏人”这一命题持有担忧态度，即对该命题有负向预期/倾向，但并未直接断言其为事实。因此在叙实性上是对该命题的反向倾向。</think>\n<answer>FALSE</answer>"
+    },
+    {
+      "id": "sp_040",
+      "gold": "TRUE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“约翰指责汤姆剽窃”只表明约翰对汤姆有剽窃的指控/看法，但不等于文本确认汤姆确实剽窃。该命题在文本中没有被断言为真，也没有明确被否定，只是被归入指责内容，因此是不确定。</think>\n<answer>UNCERTAIN</answer>"
+    },
+    {
+      "id": "sp_042",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>文本中直接说“竞争对手嘲讽我们团队提出的方案异想天开”，这表明“我们团队提出的方案异想天开”在语境中被明确呈现为对方的评价，并且是正向对应于该命题的陈述，而不是否定或纯粹不确定。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_052",
+      "gold": "FALSE",
+      "pred": "TRUE",
+      "ok": false,
+      "raw_output": "<think>“吹嘘自己精通麻衣相术”表示他在自夸并声称自己精通该术，这对“他精通麻衣相术”这一命题是正向倾向，但语境里只是“吹嘘”，并未给出真实证据；不过在叙实性判断中，文本所表达的是对该命题的肯定性陈述倾向，因此判为 TRUE。</think>\n<answer>TRUE</answer>"
+    },
+    {
+      "id": "sp_067",
+      "gold": "FALSE",
+      "pred": "UNCERTAIN",
+      "ok": false,
+      "raw_output": "<think>“他梦想……”表明主语对“那光明可以立刻来临”这一命题持希望/向往的正向态度，但这只是梦想，并未把该命题作为事实断言，也没有证据支持其实现。因此对该命题在文本中的叙实性应判为不确定。</think>\n<answer>UNCERTAIN</answer>"
+    }
+  ]
+}
